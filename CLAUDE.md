@@ -103,9 +103,21 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash - && sudo apt install -y nodejs
 ```
 
-Node must be 22 or higher — that is what the render engine runs on. `uv` builds the isolated
-Python environment WhisperX lives in: roughly 3–5 GB, several minutes, once. **Do not install
-WhisperX into your system Python.**
+Node must be 22 or higher — that is what the render engine runs on.
+
+WhisperX, in its own isolated environment — roughly 3–5 GB, several minutes, once. **Do not
+install it into your system Python:**
+
+```bash
+uv tool install whisperx
+whisperx --help
+```
+
+The `large-v3` weights and the wav2vec2 alignment model download on first transcription, not on
+install, so the first run is slow and every run after it is not. On an NVIDIA machine WhisperX
+uses CUDA and needs a matching cuDNN — a `libcudnn` load error at first run is a
+cuDNN-version mismatch, not a bad install. On Apple Silicon it runs on CPU (the backend has no
+Metal path); add `--compute_type int8` and expect roughly real-time on a talking head.
 
 The watch skill:
 
