@@ -149,8 +149,11 @@ doctor failures are expected and fine to ignore: Docker and Docker-running (not 
 whisper-cpp (WhisperX does transcription here), Kokoro TTS and MusicGen (music is licensed and
 user-supplied), and a nag to upgrade past the pin. Anything else is real.
 
-Higgsfield goes in as an MCP server: copy the connection URL from higgsfield.ai/mcp and ask
-Claude to install it. Add it under the connectors menu too if you want it in the desktop app.
+Higgsfield goes in as an MCP server, and `.mcp.json` in this workspace already points at
+`https://mcp.higgsfield.ai/mcp`. Claude Code prompts to approve a project MCP server the first
+time you open the folder; approve it, then `/mcp` to sign in — the server carries the auth, so
+there is no key to paste and nothing secret in the repo. Add it under the connectors menu too if
+you want it in the desktop app.
 
 ### Verify before building anything
 

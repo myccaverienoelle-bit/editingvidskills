@@ -137,9 +137,10 @@ Two steps left, both inside Claude Code rather than this shell:
        /plugin marketplace add bradautomates/claude-video
        /plugin install watch@claude-video
 
-  2. Higgsfield, for AI B-roll. Copy your connection URL from higgsfield.ai/mcp, then:
-       claude mcp add --transport http higgsfield "<YOUR-URL>"
-     (check `claude mcp add --help` if your CLI version wants different flags)
+  2. Higgsfield, for AI B-roll. The server is already configured in .mcp.json, so Claude Code
+     offers it the first time you open this folder — approve it, then run /mcp and sign in.
+     If it does not appear:
+       claude mcp add --transport http higgsfield "https://mcp.higgsfield.ai/mcp"
 
 HyperFrames is pinned to the version at the top of this script, and its headless Chrome is
 already installed. To see the full picture:
