@@ -21,8 +21,15 @@ file. Two things designed in from the start:
   and burn-ins clutter a 16:9 frame.
 
 Caption geometry, casing, highlight behaviour and safe-zone position all come from
-`styles/<style>/style.json` under `captions.<format>`. Voice — casing, punctuation, profanity,
-numerals — comes from `brand.md`.
+`styles/<style>/style.json` under `captions.<format>`. Voice comes from `brand.md`, and on this
+brand voice is **case dependent by design**: captions mirror the delivery rather than applying a
+house style. Read the transcript, decide in one line what this video sounds like, then style to
+that — inside the fixed floor (verbatim, no rewrites, digits for numerals, profanity kept,
+emphasis carried by the word highlight and never by capitals).
+
+**Captions never overlap the PiP.** In short form explainer the block is bottom-anchored at
+y=1600 and grows upward, capped at two lines at 56px — a third line climbs into the face. If a
+line will not fit in two, break the caption; never shrink the type.
 
 ## Music
 

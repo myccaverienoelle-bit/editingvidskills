@@ -6,8 +6,9 @@ once.
 
 Source: the Algorism theme tokens, sampled from the algorism.org hero, 21 Aug 2026.
 
-> **Still to fill:** caption voice, default hook text, and the mishear list. Colours and fonts are
-> done. The remaining `TODO`s are marked below.
+> **Status: complete enough to run a job.** Colours, fonts, caption voice and the hook doctrine
+> are all set. The mishear list is seeded and grows on its own — the rough cut's unknown-word
+> pass surfaces new candidates every video.
 
 > **Colour caveat, carried from the source:** these values were sampled from a screenshot and
 > are within ~1–2 shades of production. Verify them in DevTools against the live site before the
@@ -65,13 +66,57 @@ to be added there, not assumed.
 
 ## Caption voice
 
-TODO — two or three sentences on how captions should sound. Casing, punctuation, whether
-you swear, whether numerals stay numerals, how much a caption is allowed to differ from what
-was actually said.
+**Captions mirror the delivery. They are not a house style applied on top of it.** This is an
+educational channel, and the thing that makes teaching land is sounding like a person who
+means it — so the caption's job is to carry the way the line was actually said, not to tidy it into
+neutral copy.
 
-## Default hook text
+That makes voice case dependent by design. What is fixed is the floor, not the tone:
 
-TODO — the line that opens a video when the footage has not supplied one.
+- **Verbatim by default.** A caption may drop a filler word the cut kept for rhythm. It may not
+  rewrite, compress, or improve a sentence. If the caption and the audio disagree, the viewer
+  hears the mismatch even when they cannot name it.
+- **Punctuation follows the breath, not the grammar book.** A hard stop mid-sentence gets a
+  full stop. A trailing thought gets nothing. Never add a comma the delivery does not take.
+- **Emphasis is carried by the highlight, not by capitals.** The per-word `$accent` highlight is
+  the emphasis mechanism. No all-caps shouting inside a caption line.
+- **Numerals stay numerals.** "3 hours", never "three hours" — a caption is scanned, not read.
+- **Profanity is kept if it was said.** Censoring it mid-sentence is the least authentic thing a
+  caption can do.
+- **Casing is sentence case unless the delivery is doing something else** — a deadpan aside set
+  lower-case, a single word landed hard. Sentence case is the default, not the rule.
+
+The tone judgment is per video. Read the transcript first, decide what this one sounds like, and
+say so in one line before styling the captions.
+
+## The hook
+
+**Case dependent, and always earned from the footage.** There is no stock hook line, because a
+stock hook is exactly the thing that makes an educational audience close the tab.
+
+The problem this doctrine exists to solve: education starts from a receptivity deficit. Nobody
+arrives wanting a lesson. The first line has to buy attention before anything can be taught.
+
+Rules for deriving it, every video:
+
+1. **It lands inside the first 1.5 seconds.** No preamble ever survives the cut.
+2. **It is a real line from the video, verbatim.** Never written for the edit, never voiced over,
+   never assembled from two takes. If the best hook sits at 4:12, move it to the front — that is
+   a cut decision, not a fabrication.
+3. **It shocks by being unexpectedly true, not by overclaiming.** The pattern interrupt is a
+   claim that contradicts what the audience already believes, a number they will not believe, or
+   the cost of the thing they are currently doing wrong. Never a fabricated stat, never a promise
+   the video does not keep.
+4. **It gets paid off within 15 seconds.** An unpaid hook trains the audience to distrust the
+   next one, and on an educational channel the next one is the whole business. If nothing in the
+   first 15 seconds delivers on the hook, the hook is wrong or the cut is.
+5. **It names the stake, not the topic.** "Here's how transcription works" is a topic. "You are
+   paying an editor for something a transcript does better" is a stake.
+
+**Fallback, when the footage genuinely supplies nothing:** take the sharpest true claim in the
+first sixty seconds and lead with it verbatim. Flag it in the review — a video whose best
+available hook is weak is a pre-work problem to fix on the next script, not something to paper
+over in the edit.
 
 ## Mishear list
 
@@ -86,7 +131,6 @@ brand does, and splitting it out just gives you two files to forget about.
 |-------|---------|
 | cloud | Claude |
 | algorithm | Algorism |
-| TODO | TODO |
 
 `algorithm → Algorism` is seeded because it is the one this brand will hit constantly, and it is a
 safe single word, whole word swap. Check it in context the first time it fires — a line that
@@ -144,8 +188,25 @@ The skills parse this. Keep it in sync with the tables above — same values, tw
     "min_size_px_for_accent_text": 48,
     "one_accent_element_per_frame": true
   },
-  "caption_voice": "TODO",
-  "default_hook": "TODO",
+  "caption_voice": {
+    "mode": "mirror-delivery",
+    "verbatim": true,
+    "may_drop_fillers": true,
+    "may_rewrite": false,
+    "case": "sentence-default-delivery-wins",
+    "emphasis": "word-highlight",
+    "numerals": "digits",
+    "profanity": "keep",
+    "punctuation": "follows-breath"
+  },
+  "hook": {
+    "mode": "derived-per-video",
+    "source": "verbatim-line-from-footage",
+    "max_start_s": 1.5,
+    "pay_off_within_s": 15,
+    "fabricated_claims": false,
+    "fallback": "sharpest true claim in the first 60s, verbatim, and flag it in review"
+  },
   "misheards": [
     {"heard": "cloud", "correct": "Claude"},
     {"heard": "algorithm", "correct": "Algorism", "verify_in_context": true}
@@ -153,13 +214,13 @@ The skills parse this. Keep it in sync with the tables above — same values, tw
 }
 ```
 
-## The interview — what is left
+## The interview — settled
 
-1. ~~Six colours.~~ Done, from the Algorism tokens. Verify against DevTools once.
-2. ~~Display and caption fonts.~~ Done, files vendored.
-3. **How should captions sound?** Casing, punctuation, profanity, numerals.
-4. **Default hook text.**
-5. **Which words does WhisperX get wrong on this channel?** Your own name, product names,
-   recurring jargon. The rough cut's unknown-word pass will grow the list from there.
-6. **Which format do you mostly cut** — short form explainer, short form raw, long form? That
-   decides which style file gets built out first.
+1. ~~Six colours.~~ Done, from the Algorism tokens. Still verify against DevTools once.
+2. ~~Display and caption fonts.~~ Done, files vendored in `assets/fonts/`.
+3. ~~Caption voice.~~ Case dependent by design — mirror the delivery, floor rules above.
+4. ~~Hook.~~ Case dependent by design — derived per video, doctrine above.
+5. **Mishear list — open by design.** Seeded with the two that will fire constantly. The rough
+   cut's unknown-word pass prints every word that is neither ordinary English nor already
+   known, and recurring ones get promoted into the table above.
+6. ~~Primary format.~~ **Short form explainer.** `styles/editorial/` is built out for it.

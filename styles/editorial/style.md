@@ -57,10 +57,12 @@ Measured pacing, not vibes:
 
 Exact, because "top right, smallish" is how two videos end up not matching.
 
-- **Short form (1080×1920):** PiP occupies the bottom band. Frame 620×826, centred on x, top
-  edge at y=940. **Square corners**, 1px `$rule` border, no shadow.
-- **Long form (1920×1080):** PiP is bottom-right. Frame 480×270, right edge 96px from frame
-  right, bottom edge 96px from frame bottom. **Square corners**, 1px `$rule` border.
+- **Short form (1080×1920):** graphics own the top, the face owns the middle-bottom, captions
+  sit under the face. PiP frame 540×680, centred on x (left edge 270), **top edge y=680,
+  bottom edge y=1360**. Square corners, 1px `$rule` border, no shadow.
+- **Long form (1920×1080):** PiP is bottom-right. Frame 480×270, right edge 108px from frame
+  right, bottom edge 108px from frame bottom — inside the 10% title-safe margin. Square
+  corners, 1px `$rule` border.
 - **The PiP enters once per graphics run and holds until the run ends.** Chain everything
   between entries. Bouncing between full frame and PiP and back is the single most
   amateur-looking thing an AI editor does. Hard cuts between card contents are fine. A
@@ -114,9 +116,44 @@ Top to bottom, on `$bg` with a fine grid at 4% `$rule`:
 - **`$accent` only on large type or non-text elements.** It sits at 4.3:1 on `$bg`: fine on a
   160px number or a 2px rule, not fine on a 32px label. Small text is `$ink` or `$muted`.
 
+## Short form explainer — the format this channel cuts
+
+This is the primary format. Everything else in this file is secondary to getting this one right.
+
+**The vertical layout, in exact bands (1080×1920):**
+
+| Band | y | What lives there |
+|------|---|------------------|
+| 0–200 | Platform UI | Background only. Nothing readable. |
+| 200–660 | Graphics zone | Cards, stats, screenshots, diagrams. |
+| 680–1360 | Face | The 540×680 PiP. |
+| ~1410–1600 | Captions | Bottom-anchored at y=1600, growing upward. Max two lines. |
+| 1620–1920 | Platform UI | Background only. Username, audio tag, progress bar. |
+
+**Captions never overlap the PiP.** Two lines at 56px is the cap precisely because a third line
+would climb into the face. If a line will not fit in two, break the caption, do not shrink the type.
+
+### Receptivity — the thing this format is fighting
+
+Educational short form starts from a deficit: nobody arrives wanting a lesson. The edit has to
+buy attention before anything can be taught, and then keep re-earning it. That is not a hook
+trick, it is a pacing contract across the whole video:
+
+- **The hook lands by 1.5 seconds** and is paid off within 15. See the hook doctrine in
+  `brand.md` — it is derived per video, verbatim from the footage, never written for the edit.
+- **Something visual changes within the first 3 seconds.** The hook card counts.
+- **A payoff every 8–10 seconds** — a number, a reveal, a named consequence. A stretch longer
+  than that with nothing landing is where the audience leaves.
+- **One idea per video.** A second idea is a second video, not a longer one.
+- **The last five seconds carry the concrete takeaway**, not a sign-off. Nobody watched for
+  the sign-off.
+- **Never let a graphic explain what the face is already explaining.** Redundancy reads as
+  padding, and padding is the receptivity tax the format cannot afford.
+
 ## Format behaviour
 
-- **Short form explainer:** graphics live in the top half, face in the bottom. Captions on.
+- **Short form explainer:** graphics live in the top band, face in the PiP, captions under it.
+  Captions on. Bands as above.
 - **Short form raw:** exactly one hook card and nothing else. Captions on.
 - **Long form:** full-frame takeovers, lower thirds, no reframe at all. Captions off — YouTube
   serves its own and burn-ins clutter a 16:9 frame. Keep the outro's right 40% clear for end

@@ -21,7 +21,7 @@
     "short-form-explainer": {
       "enabled": true,
       "font": "$font.caption",
-      "size_px": 64,
+      "size_px": 56,
       "case": "sentence",
       "max_chars_per_line": 24,
       "max_lines": 2,
@@ -37,12 +37,16 @@
         "mode": "word",
         "fill": "$accent"
       },
-      "line_height": 1.65
+      "line_height": 1.35,
+      "anchor": "bottom",
+      "block_bottom_y": 1600,
+      "never_overlap_pip": true,
+      "voice": "$caption_voice"
     },
     "short-form-raw": {
       "enabled": true,
       "font": "$font.caption",
-      "size_px": 64,
+      "size_px": 56,
       "case": "sentence",
       "max_chars_per_line": 24,
       "max_lines": 2,
@@ -58,7 +62,11 @@
         "mode": "word",
         "fill": "$accent"
       },
-      "line_height": 1.65
+      "line_height": 1.35,
+      "anchor": "bottom",
+      "block_bottom_y": 1600,
+      "never_overlap_pip": true,
+      "voice": "$caption_voice"
     },
     "long-form": {
       "enabled": false
@@ -66,11 +74,13 @@
   },
   "hook": {
     "required": true,
-    "max_start_s": 1.5,
     "kind": "card",
     "duration_s": 2.5,
-    "text_source": "transcript_first_line",
-    "fallback_text": "$default_hook"
+    "max_start_s": 1.5,
+    "source": "verbatim-line-from-footage",
+    "pay_off_within_s": 15,
+    "fabricated_claims": false,
+    "fallback": "sharpest true claim in the first 60s, verbatim, flag in review"
   },
   "graphics": {
     "kinds": [
@@ -102,19 +112,20 @@
     "instant_change_duration_s": 0.25,
     "pip": {
       "short-form": {
-        "w": 620,
-        "h": 826,
+        "w": 540,
+        "h": 680,
         "x": "center",
-        "y": 940,
+        "y": 680,
         "radius_px": 0,
         "border_px": 1,
-        "border_color": "$rule"
+        "border_color": "$rule",
+        "enters_once_per_run": true
       },
       "long-form": {
         "w": 480,
         "h": 270,
-        "right_px": 96,
-        "bottom_px": 96,
+        "right_px": 108,
+        "bottom_px": 108,
         "radius_px": 0,
         "border_px": 1,
         "border_color": "$rule"
@@ -145,7 +156,28 @@
       "exit": "power2.inOut",
       "zoom": "power2.inOut"
     },
-    "stat_min_px": 160
+    "stat_min_px": 160,
+    "zones": {
+      "short-form": {
+        "graphics_y": [
+          200,
+          660
+        ],
+        "face_y": [
+          680,
+          1360
+        ],
+        "captions_y": [
+          1410,
+          1600
+        ]
+      }
+    },
+    "payoff_interval_s": [
+      8,
+      10
+    ],
+    "first_visual_change_by_s": 3
   },
   "audio": {
     "music_db": -18,
@@ -180,5 +212,6 @@
     "label_case": "upper",
     "headline_measure_ch": 16,
     "accent_min_text_px": 48
-  }
+  },
+  "primary_format": "short-form-explainer"
 }

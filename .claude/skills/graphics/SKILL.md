@@ -52,7 +52,7 @@ them motion and a visual element rather than a wall of type.
 
 | Format | Placement |
 |--------|-----------|
-| Short form explainer | Graphics in the top half, face in the bottom. |
+| Short form explainer | Graphics in the top band (y 200–660), face in the PiP (y 680–1360), captions under it. The primary format — bands are exact, see the style file. |
 | Short form raw | Exactly one hook card and nothing else. |
 | Long form | Full-frame takeovers, lower thirds, and no reframe at all. |
 
