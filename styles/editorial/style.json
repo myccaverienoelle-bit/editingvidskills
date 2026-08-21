@@ -1,0 +1,98 @@
+{
+  "name": "editorial",
+  "formats": ["short-form-explainer", "short-form-raw", "long-form"],
+  "colors": {
+    "bg": "$bg",
+    "rule": "$rule",
+    "accent": "$accent",
+    "accent_soft": "$accent-soft",
+    "ink": "$ink",
+    "muted": "$muted"
+  },
+  "fonts": {
+    "display": "$font.display",
+    "caption": "$font.caption"
+  },
+  "captions": {
+    "short-form-explainer": {
+      "enabled": true,
+      "font": "$font.caption",
+      "size_px": 64,
+      "case": "sentence",
+      "max_chars_per_line": 24,
+      "max_lines": 2,
+      "position_y": 1450,
+      "fill": "$ink",
+      "box": {"fill": "$bg", "opacity": 0.88, "radius_px": 12, "pad_px": 20},
+      "highlight": {"mode": "word", "fill": "$accent"}
+    },
+    "short-form-raw": {
+      "enabled": true,
+      "font": "$font.caption",
+      "size_px": 64,
+      "case": "sentence",
+      "max_chars_per_line": 24,
+      "max_lines": 2,
+      "position_y": 1450,
+      "fill": "$ink",
+      "box": {"fill": "$bg", "opacity": 0.88, "radius_px": 12, "pad_px": 20},
+      "highlight": {"mode": "word", "fill": "$accent"}
+    },
+    "long-form": {
+      "enabled": false
+    }
+  },
+  "hook": {
+    "required": true,
+    "max_start_s": 1.5,
+    "kind": "card",
+    "duration_s": 2.5,
+    "text_source": "transcript_first_line",
+    "fallback_text": "$default_hook"
+  },
+  "graphics": {
+    "kinds": ["stat", "card", "screenshot", "takeover", "zoom", "diagram", "broll-slot"],
+    "density": {
+      "short-form-explainer": {"lines_per_graphic": 5},
+      "short-form-raw": {"max_graphics": 1},
+      "long-form": {"lines_per_graphic": 10}
+    },
+    "min_duration_s": 2.5,
+    "max_duration_s": 6.0,
+    "max_consecutive": 2,
+    "tail_margin_s": 0.5,
+    "continuous_motion_threshold_s": 20,
+    "stagger_s": 0.4,
+    "instant_change_duration_s": 0.25,
+    "pip": {
+      "short-form": {"w": 620, "h": 826, "x": "center", "y": 940, "radius_px": 24, "border_px": 1, "border_color": "$rule"},
+      "long-form": {"w": 480, "h": 270, "right_px": 96, "bottom_px": 96, "radius_px": 16, "border_px": 1, "border_color": "$rule"},
+      "enters_once_per_run": true
+    },
+    "safe_zones": {
+      "short-form": {"w": 1080, "h": 1920, "top_px": 200, "bottom_px": 300},
+      "long-form": {"w": 1920, "h": 1080, "margin_pct": 10, "outro_clear_right_pct": 40}
+    },
+    "drift": {"scale_from": 1.0, "scale_to": 1.03, "ease": "none"},
+    "eases": {
+      "enter": "power3.out",
+      "exit": "power2.inOut",
+      "zoom": "power2.inOut"
+    }
+  },
+  "audio": {
+    "music_db": -18,
+    "music_duck": false,
+    "music_fade_in": false,
+    "music_fade_out_s": 2.0,
+    "sfx_db": -10,
+    "sfx_max_per_minute": 3
+  },
+  "qa": {
+    "duplicate_frame_fail_pct": 8,
+    "duplicate_frame_clean_pct": 3,
+    "segment_gamma_correction": 1.03,
+    "early_spot_review_at_pct": 10
+  },
+  "learned": []
+}
