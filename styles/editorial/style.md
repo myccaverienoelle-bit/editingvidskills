@@ -58,9 +58,9 @@ Measured pacing, not vibes:
 Exact, because "top right, smallish" is how two videos end up not matching.
 
 - **Short form (1080×1920):** PiP occupies the bottom band. Frame 620×826, centred on x, top
-  edge at y=940. 24px corner radius, 1px `$rule` border, no shadow.
+  edge at y=940. **Square corners**, 1px `$rule` border, no shadow.
 - **Long form (1920×1080):** PiP is bottom-right. Frame 480×270, right edge 96px from frame
-  right, bottom edge 96px from frame bottom. 16px corner radius, 1px `$rule` border.
+  right, bottom edge 96px from frame bottom. **Square corners**, 1px `$rule` border.
 - **The PiP enters once per graphics run and holds until the run ends.** Chain everything
   between entries. Bouncing between full frame and PiP and back is the single most
   amateur-looking thing an AI editor does. Hard cuts between card contents are fine. A
@@ -72,10 +72,10 @@ Exact, because "top right, smallish" is how two videos end up not matching.
 
 Top to bottom, on `$bg` with a fine grid at 4% `$rule`:
 
-1. Eyebrow — caption font, 32px short form / 24px long form, `$muted`, letter-spaced 0.08em, uppercase.
+1. Eyebrow — caption font (medium), 32px short form / 24px long form, `$muted`, letter-spaced 0.14em, uppercase.
 2. Rule — 2px `$accent`, 96px wide, draws in left to right over 0.4s.
-3. Headline — display font, 120px short form / 84px long form, `$ink`, max three lines, clip-mask reveal per line, staggered 0.12s.
-4. Support line — caption font, 40px / 30px, `$muted`, appears 0.4s after the headline settles.
+3. Headline — display font at weight 400 (never bold), 120px short form / 84px long form, `$ink`, tracking −0.01em, line height 1.15, max ~16 characters per line and max three lines, clip-mask reveal per line, staggered 0.12s.
+4. Support line — caption font, 40px / 30px, `$muted`, line height 1.65, appears 0.4s after the headline settles.
 5. One visual element — icon, mark, or screenshot fragment — carrying `$accent` on exactly one element in the frame.
 
 ## Camera behaviour inside a scene
@@ -91,19 +91,28 @@ Top to bottom, on `$bg` with a fine grid at 4% `$rule`:
 
 ## Texture
 
-- Background is never flat: a vertical `$bg` → `$accent-soft` gradient at 6% opacity, plus a
-  1px grid at 4% `$rule` on 96px pitch, plus a 12% vignette.
-- Panels read on their own fill (`$bg` at 92%), never on a backdrop blur — transparent overlays
-  have nothing behind them to blur.
+- Background is never flat: `$bg` warming into `$accent-soft` across the top third — on this
+  dark palette that is a real blend, not a 6% wash, mixing to about 40% `$accent-soft` at the
+  very top — plus a 1px grid at 4% `$rule` on 96px pitch, plus a 12% vignette.
+- Panels read on their own fill — the raised surface `#131417` at 92%, or `$bg` at 92% when
+  they sit over footage — never on a backdrop blur, because transparent overlays have nothing
+  behind them to blur.
 - Thin 1px `$accent` highlights on the top edge of raised panels. Low-opacity reflections under
   hero numbers.
 - No drop shadows deeper than 24px blur / 8% opacity.
 
 ## Which font does which job
 
-- Display font: headlines, stats, big numbers, the hook card. Never body copy.
-- Caption font: burned-in captions, eyebrows, labels, chips, support lines, diagram text.
+- **Display — Newsreader, weight 400:** headlines, stats, big numbers, the hook card, pull
+  quotes (italic). Never body copy, never bold. The serif does the work; adding weight to it
+  reads as a different brand.
+- **Caption — Inter, 400 / 500:** burned-in captions, eyebrows, labels, chips, support lines,
+  diagram text. Medium (500) only for uppercase labels.
 - Primary numbers are 160px minimum. Scale is dramatic or it is not a stat.
+- **Corner radius is 0 on everything** — cards, panels, chips, caption boxes, PiP. Sharp corners
+  are the brand.
+- **`$accent` only on large type or non-text elements.** It sits at 4.3:1 on `$bg`: fine on a
+  160px number or a 2px rule, not fine on a 32px label. Small text is `$ink` or `$muted`.
 
 ## Format behaviour
 

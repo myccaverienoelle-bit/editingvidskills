@@ -1,6 +1,10 @@
 {
   "name": "editorial",
-  "formats": ["short-form-explainer", "short-form-raw", "long-form"],
+  "formats": [
+    "short-form-explainer",
+    "short-form-raw",
+    "long-form"
+  ],
   "colors": {
     "bg": "$bg",
     "rule": "$rule",
@@ -23,8 +27,17 @@
       "max_lines": 2,
       "position_y": 1450,
       "fill": "$ink",
-      "box": {"fill": "$bg", "opacity": 0.88, "radius_px": 12, "pad_px": 20},
-      "highlight": {"mode": "word", "fill": "$accent"}
+      "box": {
+        "fill": "$bg",
+        "opacity": 0.88,
+        "radius_px": 0,
+        "pad_px": 20
+      },
+      "highlight": {
+        "mode": "word",
+        "fill": "$accent"
+      },
+      "line_height": 1.65
     },
     "short-form-raw": {
       "enabled": true,
@@ -35,8 +48,17 @@
       "max_lines": 2,
       "position_y": 1450,
       "fill": "$ink",
-      "box": {"fill": "$bg", "opacity": 0.88, "radius_px": 12, "pad_px": 20},
-      "highlight": {"mode": "word", "fill": "$accent"}
+      "box": {
+        "fill": "$bg",
+        "opacity": 0.88,
+        "radius_px": 0,
+        "pad_px": 20
+      },
+      "highlight": {
+        "mode": "word",
+        "fill": "$accent"
+      },
+      "line_height": 1.65
     },
     "long-form": {
       "enabled": false
@@ -51,11 +73,25 @@
     "fallback_text": "$default_hook"
   },
   "graphics": {
-    "kinds": ["stat", "card", "screenshot", "takeover", "zoom", "diagram", "broll-slot"],
+    "kinds": [
+      "stat",
+      "card",
+      "screenshot",
+      "takeover",
+      "zoom",
+      "diagram",
+      "broll-slot"
+    ],
     "density": {
-      "short-form-explainer": {"lines_per_graphic": 5},
-      "short-form-raw": {"max_graphics": 1},
-      "long-form": {"lines_per_graphic": 10}
+      "short-form-explainer": {
+        "lines_per_graphic": 5
+      },
+      "short-form-raw": {
+        "max_graphics": 1
+      },
+      "long-form": {
+        "lines_per_graphic": 10
+      }
     },
     "min_duration_s": 2.5,
     "max_duration_s": 6.0,
@@ -65,20 +101,51 @@
     "stagger_s": 0.4,
     "instant_change_duration_s": 0.25,
     "pip": {
-      "short-form": {"w": 620, "h": 826, "x": "center", "y": 940, "radius_px": 24, "border_px": 1, "border_color": "$rule"},
-      "long-form": {"w": 480, "h": 270, "right_px": 96, "bottom_px": 96, "radius_px": 16, "border_px": 1, "border_color": "$rule"},
+      "short-form": {
+        "w": 620,
+        "h": 826,
+        "x": "center",
+        "y": 940,
+        "radius_px": 0,
+        "border_px": 1,
+        "border_color": "$rule"
+      },
+      "long-form": {
+        "w": 480,
+        "h": 270,
+        "right_px": 96,
+        "bottom_px": 96,
+        "radius_px": 0,
+        "border_px": 1,
+        "border_color": "$rule"
+      },
       "enters_once_per_run": true
     },
     "safe_zones": {
-      "short-form": {"w": 1080, "h": 1920, "top_px": 200, "bottom_px": 300},
-      "long-form": {"w": 1920, "h": 1080, "margin_pct": 10, "outro_clear_right_pct": 40}
+      "short-form": {
+        "w": 1080,
+        "h": 1920,
+        "top_px": 200,
+        "bottom_px": 300
+      },
+      "long-form": {
+        "w": 1920,
+        "h": 1080,
+        "margin_pct": 10,
+        "outro_clear_right_pct": 40
+      }
     },
-    "drift": {"scale_from": 1.0, "scale_to": 1.03, "ease": "none"},
+    "drift": {
+      "scale_from": 1.0,
+      "scale_to": 1.03,
+      "ease": "none"
+    },
     "eases": {
       "enter": "power3.out",
       "exit": "power2.inOut",
       "zoom": "power2.inOut"
-    }
+    },
+    "stat_min_px": 160
   },
   "audio": {
     "music_db": -18,
@@ -94,5 +161,24 @@
     "segment_gamma_correction": 1.03,
     "early_spot_review_at_pct": 10
   },
-  "learned": []
+  "learned": [],
+  "surfaces": {
+    "panel": "#131417",
+    "button_border": "#4A4A4C",
+    "on_accent": "#FFF7F2",
+    "accent_pressed": "#97482C",
+    "body_text": "#EDEBE6"
+  },
+  "type": {
+    "radius_px": 0,
+    "display_weight": 400,
+    "headline_tracking_em": -0.01,
+    "headline_line_height": 1.15,
+    "body_line_height": 1.65,
+    "quote_line_height": 1.5,
+    "label_tracking_em": 0.14,
+    "label_case": "upper",
+    "headline_measure_ch": 16,
+    "accent_min_text_px": 48
+  }
 }

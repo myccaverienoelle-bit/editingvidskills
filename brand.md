@@ -4,34 +4,64 @@ The one file you personalise. Every style file refers to colours as `$accent` or
 hardcoding hex values, so changing one brand colour recolours every graphic in every style at
 once.
 
-> **Status: NOT FILLED IN.** Every `TODO` below is a field the interview has to fill. Do not run a
-> job against this file while any `TODO` remains — a blank field becomes a guess, and a guess
-> becomes standing behaviour. Ask the questions in "The interview" at the bottom, then delete
-> this block.
+Source: the Algorism theme tokens, sampled from the algorism.org hero, 21 Aug 2026.
+
+> **Still to fill:** caption voice, default hook text, and the mishear list. Colours and fonts are
+> done. The remaining `TODO`s are marked below.
+
+> **Colour caveat, carried from the source:** these values were sampled from a screenshot and
+> are within ~1–2 shades of production. Verify them in DevTools against the live site before the
+> first render — they become the colour of every graphic in every video.
 
 ## Colours
 
 Six colours, each with a role, each with one hex value. Six is deliberately few: a palette with
-twelve entries is a palette the editor will use badly. Keep `bg` and `ink` at readable contrast,
-and let `accent` be your one bold brand colour, used sparingly.
+twelve entries is a palette the editor will use badly.
 
-| Token | Role | Hex |
-|-------|------|-----|
-| `bg` | Background base | TODO |
-| `rule` | Thin lines, grid, hairlines | TODO |
-| `accent` | The one loud colour | TODO |
-| `accent-soft` | A quieter tint of it, for gradients and decoration | TODO |
-| `ink` | Dark title text | TODO |
-| `muted` | Subheads and labels | TODO |
+| Token | Role | Hex | From |
+|-------|------|-----|------|
+| `bg` | Background base | `#0B0C0E` | `--bg-base` |
+| `rule` | Thin lines, grid, hairlines | `#2A2B2E` | `--border-subtle` |
+| `accent` | The one loud colour | `#B45D3B` | `--accent` |
+| `accent-soft` | A quieter tint of it, for gradients and decoration | `#3A2C24` | `--bg-hero-warm` |
+| `ink` | Title text | `#F5F3EE` | `--text-display` |
+| `muted` | Subheads and labels | `#A8A49C` | `--text-muted` |
+
+**This is a dark palette, so `ink` inverts:** it is still "the colour titles are set in", it is just light
+on dark. Nothing downstream should assume `ink` is dark or `bg` is light.
+
+Measured contrast against `bg`: `ink` 17.6:1, `muted` 7.9:1, `accent` 4.3:1. **`accent` is for
+large type and non-text elements only** — it clears the 3:1 bar for big display type and misses
+4.5:1 for anything small. Same for `#FFF7F2` on `accent` (4.3:1): fine on a 160px number, not
+fine on a 24px label.
+
+### Logo mark only — never in a graphic
+
+`#123A63` (deep blue), `#4E9B8A` (teal), `#2C6E9B` (mid blue). These live in the mark and
+nowhere else. A graphic that reaches for them has broken the brand, not extended the palette.
 
 ## Fonts
 
-Real font files live in `assets/fonts/`. Renders cannot rely on system fonts.
+Real font files, vendored into `assets/fonts/`. Renders cannot rely on system fonts.
 
 | Role | Family | File |
 |------|--------|------|
-| Display — titles, stats, hero type | TODO | TODO |
-| Caption — burned-in captions | TODO | TODO |
+| Display — titles, stats, hero type, pull quotes | Newsreader (serif, 400, and italic for quotes) | `assets/fonts/Newsreader-Regular.ttf`, `assets/fonts/Newsreader-Italic.ttf` |
+| Caption — burned-in captions, labels, eyebrows, UI-ish text | Inter (400, 500) | `assets/fonts/Inter-Regular.ttf`, `assets/fonts/Inter-Medium.ttf` |
+
+Both are OFL 1.1, pulled from Google Fonts. The web stack falls back to Canela/Georgia and
+system sans; renders do not fall back at all, so if a weight is missing from `assets/fonts/` it has
+to be added there, not assumed.
+
+## Type conventions carried from the web theme
+
+- Display is set at weight **400**, never bold. The serif does the work.
+- Headline tracking is tight: `-0.01em`. Line height `1.15`.
+- Body/caption line height `1.65`; quotes `1.5`.
+- Uppercase labels and buttons are **letter-spaced `0.14em`**; the wordmark `0.18em`.
+- **Corner radius is `0` everywhere.** Sharp corners are the look — no rounded cards, no
+  rounded caption boxes, no rounded PiP.
+- Headlines cap at ~16 characters per line; body copy at ~65 characters.
 
 ## Caption voice
 
@@ -55,9 +85,14 @@ brand does, and splitting it out just gives you two files to forget about.
 | Heard | Correct |
 |-------|---------|
 | cloud | Claude |
+| algorithm | Algorism |
 | TODO | TODO |
 
-Only ever auto-apply single word, whole word swaps. A two-word-into-one fix would change
+`algorithm → Algorism` is seeded because it is the one this brand will hit constantly, and it is a
+safe single word, whole word swap. Check it in context the first time it fires — a line that
+genuinely says "algorithm" exists too.
+
+**Only ever auto-apply single word, whole word swaps.** A two-word-into-one fix would change
 the word count and break every timestamp downstream — those get flagged for a human.
 
 ## Machine-readable block
@@ -67,39 +102,64 @@ The skills parse this. Keep it in sync with the tables above — same values, tw
 ```json
 {
   "colors": {
-    "bg": "TODO",
-    "rule": "TODO",
-    "accent": "TODO",
-    "accent-soft": "TODO",
-    "ink": "TODO",
-    "muted": "TODO"
+    "bg": "#0B0C0E",
+    "rule": "#2A2B2E",
+    "accent": "#B45D3B",
+    "accent-soft": "#3A2C24",
+    "ink": "#F5F3EE",
+    "muted": "#A8A49C"
+  },
+  "colors_logo_only": {
+    "brand-blue-deep": "#123A63",
+    "brand-teal": "#4E9B8A",
+    "brand-blue-mid": "#2C6E9B"
   },
   "fonts": {
-    "display": {"family": "TODO", "file": "assets/fonts/TODO"},
-    "caption": {"family": "TODO", "file": "assets/fonts/TODO"}
+    "display": {
+      "family": "Newsreader",
+      "weight": 400,
+      "file": "assets/fonts/Newsreader-Regular.ttf",
+      "italic_file": "assets/fonts/Newsreader-Italic.ttf"
+    },
+    "caption": {
+      "family": "Inter",
+      "weight": 400,
+      "file": "assets/fonts/Inter-Regular.ttf",
+      "medium_file": "assets/fonts/Inter-Medium.ttf"
+    }
+  },
+  "type": {
+    "radius_px": 0,
+    "display_weight": 400,
+    "headline_tracking_em": -0.01,
+    "headline_line_height": 1.15,
+    "body_line_height": 1.65,
+    "quote_line_height": 1.5,
+    "label_tracking_em": 0.14,
+    "wordmark_tracking_em": 0.18,
+    "headline_measure_ch": 16,
+    "body_measure_ch": 65
+  },
+  "accent_rules": {
+    "min_size_px_for_accent_text": 48,
+    "one_accent_element_per_frame": true
   },
   "caption_voice": "TODO",
   "default_hook": "TODO",
   "misheards": [
-    {"heard": "cloud", "correct": "Claude"}
+    {"heard": "cloud", "correct": "Claude"},
+    {"heard": "algorithm", "correct": "Algorism", "verify_in_context": true}
   ]
 }
 ```
 
-## The interview
+## The interview — what is left
 
-Ask all of these. Do not leave any field blank, and do not infer a value from another answer.
-
-1. Six colours, one hex each: background base, hairline/rule, the one loud accent, a soft tint of
-   that accent, dark title ink, muted subhead grey. If they only have a brand accent, derive the
-   other five as a proposal and get them confirmed — proposed and confirmed is fine, silently
-   invented is not.
-2. Display font and caption font, by name, plus where the files are. If they do not have files,
-   that is a task before the first render, not a shrug.
-3. How should captions sound? Casing, punctuation, profanity, numerals.
-4. Default hook text.
-5. Which words does WhisperX get wrong on their channel? Their own name, their product
-   names, recurring jargon. Get at least the obvious ones now; the rough cut's unknown-word
-   pass will grow the list.
-6. Which format do they mostly cut — short form explainer, short form raw, long form? That
+1. ~~Six colours.~~ Done, from the Algorism tokens. Verify against DevTools once.
+2. ~~Display and caption fonts.~~ Done, files vendored.
+3. **How should captions sound?** Casing, punctuation, profanity, numerals.
+4. **Default hook text.**
+5. **Which words does WhisperX get wrong on this channel?** Your own name, product names,
+   recurring jargon. The rough cut's unknown-word pass will grow the list from there.
+6. **Which format do you mostly cut** — short form explainer, short form raw, long form? That
    decides which style file gets built out first.
