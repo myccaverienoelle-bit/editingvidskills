@@ -12,5 +12,7 @@ your looks, `assets/` holds real fonts, logos and sound samples, and `projects/`
 folder per video. The five stage skills live in `.claude/skills/` — `rough-cut`, `graphics`,
 `ai-broll`, `finishing`, `export`.
 
-Start with the interview at the bottom of `brand.md`. Nothing should run against it while a
-`TODO` remains.
+On a fresh machine, run `./setup.sh` first — it installs the missing half of the stack (FFmpeg,
+Node 22, uv, git-lfs, PIL, WhisperX) and prints the two steps that have to happen inside Claude
+Code: the `watch` plugin and the Higgsfield MCP. `./setup.sh --check` verifies without
+installing.

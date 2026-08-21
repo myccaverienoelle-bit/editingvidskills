@@ -83,6 +83,12 @@ that makes Claude better at front end design makes the motion graphics better to
 
 ### Install
 
+`./setup.sh` does the binary half of this on macOS and on Ubuntu/Debian/WSL2 — it installs only
+what is missing and is safe to re-run. `./setup.sh --check` verifies without installing anything.
+It is the one file in this workspace that is neither taste nor a job; it earns its place by being
+the thing a fresh machine runs before either of those exists. Everything below is what it does,
+and what to do on a platform it does not cover.
+
 On Windows, do this in WSL2 first — FFmpeg, the render engine and the transcription stack are
 Unix tools and will not run in PowerShell. `wsl --install` in an Administrator PowerShell, reboot,
 then do everything below inside the Ubuntu terminal, including installing Claude Code. Keep the
@@ -129,13 +135,19 @@ The watch skill:
 HyperFrames, from inside this workspace:
 
 ```bash
-npx hyperframes@latest doctor
+npx hyperframes@0.8.7 doctor
+npx hyperframes@0.8.7 browser ensure
 ```
 
-Pin the version once it works and leave it pinned. Everything here is tuned against one
-version's quirks, and a silent upgrade will break renders you already signed off on. Two doctor
-failures are expected on a healthy machine: a nag to upgrade past your pin, and Docker not
-running. Ignore both — you do not need Docker.
+**`browser ensure` is not optional.** The engine renders every graphic in a headless Chrome
+(~114 MB, downloaded once). `doctor` reports its absence as one failure among several optional
+ones, which makes it easy to read as noise and skip — and then every render fails.
+
+Pin the version and leave it pinned. Everything here is tuned against one version's quirks, and a
+silent upgrade will break renders you already signed off on. On a machine set up this way, these
+doctor failures are expected and fine to ignore: Docker and Docker-running (not needed),
+whisper-cpp (WhisperX does transcription here), Kokoro TTS and MusicGen (music is licensed and
+user-supplied), and a nag to upgrade past the pin. Anything else is real.
 
 Higgsfield goes in as an MCP server: copy the connection URL from higgsfield.ai/mcp and ask
 Claude to install it. Add it under the connectors menu too if you want it in the desktop app.
