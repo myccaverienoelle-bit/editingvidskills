@@ -30,18 +30,61 @@ stage lands every time: cutting raw footage down is a pure transcript problem.
    `outputs/transcript-cut.json`. Every downstream skill reads that file. Nothing re-transcribes,
    ever.
 
-## What gets cut automatically
+## Performance is not in the transcript
 
-- Filler words, when they are vestigial.
-- Stutters and false starts.
+The transcript records what was said. It records nothing about how it was said — and how it was
+said is half of what makes a talking head worth watching. A line that reads redundant on the
+page can be the moment the speaker is most alive. A line that reads clean can be delivered flat.
+
+So the cut splits into two tiers, and **only one of them is safe to decide blind.**
+
+### Tier 1 — mechanical kills. Auto-apply.
+
+These carry no performance value by definition, so nothing is lost by deciding them from
+timings alone:
+
 - Silences over about 0.4 seconds.
-- Tangents that do not serve the hook.
+- Stutters and false starts.
 - Throat clears, and "let me start over".
+- Superseded takes: when a line was recorded several times, **take the last one, always.** It is
+  the warmest delivery, and comparing takes wastes an hour.
 - Any preamble before the hook lands. **Every video opens on the hook.**
-- When a line was recorded several times, **take the last one, always.** It is the warmest
-  delivery, and comparing takes wastes an hour.
+- Vestigial filler words — but **preserve cadence**. Do not surgically remove every "like". Some
+  of them are rhythm.
 
-**Preserve cadence.** Do not surgically remove every "like". Some of them are rhythm.
+### Tier 2 — editorial kills. Never auto-apply.
+
+Tangents, repetition, weaker phrasings of a point made better elsewhere, anything cut because
+it "does not serve the hook". These are exactly the judgments the transcript cannot support.
+Each one goes into the cut sheet as a **proposal** — `"proposed": true`, with the segment still
+present — and stays a proposal until it is cleared by eyes, either the creator's or a review
+sub-agent's.
+
+Every Tier 2 proposal carries an evidence pack, so clearing it takes seconds instead of a
+rewatch:
+
+1. **Three frames** — 0.5s after the in-point, the midpoint, and 0.5s before the out-point.
+   Extract them at exactly those times; do not sample the clip generally.
+2. **Delivery signals for the span**, measured against the video's own median: RMS energy,
+   speaking rate in words per second from the word timings, and the pause pattern. A span in
+   the top decile for energy or pace is a **performance peak — protect it unless it is a genuine
+   tangent**, and say so in the proposal.
+3. **The text either side of the join**, so the seam can be read as a sentence.
+
+### The protect list
+
+Before cutting, ask the creator for anything that survives no matter what — a timestamp, a
+phrase, "the bit where I get animated about pricing". Those spans are never proposed for
+removal, and the cut sheet records why they were kept.
+
+### Check every join with frames, not just the text
+
+A join can read perfectly and still look wrong: the speaker's head jumps position, a hand is
+mid-gesture, the eyeline changes. Pull the last frame before and the first frame after each
+join and compare them. This catches the class of error the transcript cannot represent at all.
+
+Where audio is all that is available, say so explicitly and hand back the cut sheet as a
+proposal in full — never as an applied cut.
 
 ## The gotchas that cost the most
 

@@ -208,6 +208,10 @@ Rules for the review loop, and they apply to every stage that renders anything:
   comments left on them — what music and where, what graphic on this line, a link to the
   reference image — are the difference between an edit that comes back usable and one that
   needs an afternoon of directing.
+- **The transcript does not carry performance.** Mechanical kills — dead air, stutters,
+  superseded takes — are safe to decide from timings. Editorial kills are not: they stay
+  proposals in the cut sheet until frames and delivery signals clear them. A cut that reads
+  right on the page can still throw away the best moment in the video.
 - Never re-transcribe. Stage 1 writes the durable transcript; everything downstream reads it.
 - Never re-render the base cut to change a graphic. Regenerate one composition, re-render one
   part, run one composite pass.
