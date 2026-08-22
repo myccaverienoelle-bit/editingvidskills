@@ -77,6 +77,10 @@ stage. Stage suffixes are how you end up with four folders and no idea which one
 | Higgsfield | One MCP connection to every good image and video model, for AI B-roll. | higgsfield.ai |
 | `watch` skill | Gives Claude eyes. The one that makes it autonomous. Free. | github.com/bradautomates/claude-video |
 
+The workspace also carries its own `watch` skill in `.claude/skills/watch/`, built on FFmpeg
+alone. It covers the same mechanism — frames at exact timestamps — without the plugin, so a
+session that cannot install plugins can still see.
+
 A taste skill is the optional seventh. Every HyperFrames graphic is HTML and CSS, so anything
 that makes Claude better at front end design makes the motion graphics better too
 (`tasteskill.dev`). Install it globally and every graphic in every video improves at once.
