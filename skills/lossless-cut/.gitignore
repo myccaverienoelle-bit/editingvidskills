@@ -1,0 +1,8 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# Session artifacts if someone runs the helpers inside the skill dir
+# (outputs belong in <videos_dir>/edit/ — safety net only)
+edit/
+*.log
