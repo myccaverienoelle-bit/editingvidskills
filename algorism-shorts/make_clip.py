@@ -203,36 +203,37 @@ def build_ass(spec: dict, transcript: dict, out_path: Path) -> None:
     out_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
-def vf_for(spec: dict, rng: dict, W: int, H: int) -> str:
-    """Crop window computed numerically from the effective (rotated) source
-    dims. This footage is native portrait 2160x3840, so 9:16 is a pure
-    downscale; 1:1 is a face-anchored square crop; punch-ins are
-    face-locked zoom crops (cuts land between sentences, never mid-word).
+def vf_pre(spec: dict) -> str:
+    """Chain BEFORE stabilization: normalize the native-portrait source to
+    the full 1080x1920 frame. Stabilization must always run on this full
+    frame — the background dominates it, so vid.stab tracks the room, not
+    the speaker. (Detecting on a tighter crop mistracks his body: the 1:1
+    squares came out over-zoomed and off-center that way.)"""
+    return "scale=1080:1920"
 
-    face_y: face center as a fraction of source height (locked-off tripod
-    shot, so one value serves the whole talk). Within the crop window the
-    face is kept at the same relative height (9:16) or at 40% (1:1).
+
+def vf_post(spec: dict, rng: dict) -> str:
+    """Chain AFTER stabilization: aspect crop / punch-in, in output pixels.
+
+    face_y: face center as a fraction of frame height (locked-off framing,
+    one value serves the whole talk). The 1:1 crop puts the face at 40% of
+    the square. Zoom crops upscale from 1080p — unused in this edit.
     """
     aspect = spec.get("aspect", "916")
     z = float(rng.get("zoom", spec.get("zoom", 1.0)))
     fy = float(rng.get("face_y", spec.get("face_y", 0.44)))
-    if aspect == "916":
-        cw, ch = W / z, H / z
-        y = fy * H * (1 - 1 / z)
-        ow, oh = 1080, 1920
-    else:
-        cw = ch = W / z
-        y = fy * H - 0.40 * ch
-        ow, oh = 1080, 1080
-    x = (W - cw) / 2
-    cw_i = min(W, max(2, int(cw / 2) * 2))
-    ch_i = min(H, max(2, int(ch / 2) * 2))
-    x_i = min(W - cw_i, max(0, int(x / 2) * 2))
-    y_i = min(H - ch_i, max(0, int(y / 2) * 2))
     parts = []
-    if not (aspect == "916" and z == 1.0):
-        parts.append(f"crop=w={cw_i}:h={ch_i}:x={x_i}:y={y_i}")
-    parts.append(f"scale={ow}:{oh}")
+    if aspect == "11":
+        y = min(1920 - 1080, max(0, int((fy * 1920 - 0.40 * 1080) / 2) * 2))
+        parts.append(f"crop=1080:1080:0:{y}")
+    if z > 1.0:
+        ow, oh = (1080, 1080) if aspect == "11" else (1080, 1920)
+        w = max(2, int(ow / z / 2) * 2)
+        h = max(2, int(oh / z / 2) * 2)
+        x = int((ow - w) / 4) * 2
+        yz = min(oh - h, max(0, int(fy * oh * (1 - 1 / z) / 2) * 2))
+        parts.append(f"crop={w}:{h}:{x}:{yz}")
+        parts.append(f"scale={ow}:{oh}")
     return ",".join(parts)
 
 
@@ -244,7 +245,6 @@ def main() -> None:
     transcript = json.loads(Path(spec["transcript"]).read_text())
     aspect = spec.get("aspect", "916")
     fps = probe_fps(src)
-    W, H = probe_display_dims(src)
     work = Path(tempfile.mkdtemp(prefix=f"clip_{spec['id']}_"))
 
     enc_v = ["-c:v", "libx264", "-preset", "fast", "-crf", "18",
@@ -264,16 +264,18 @@ def main() -> None:
         fo = max(0.0, dur - 0.03)
         seg = work / f"seg_{i:02d}.mp4"
         trf = work / f"seg_{i:02d}.trf"
-        geom = vf_for(spec, r, W, H)
-        vf = geom
+        pre, post = vf_pre(spec), vf_post(spec, r)
+        vf = pre
         if spec.get("stabilize", True):
             run(["ffmpeg", "-y", "-ss", f"{a:.3f}", "-i", src, "-t", f"{dur:.3f}",
                  "-map", "0:v:0",
-                 "-vf", f"{geom},vidstabdetect=shakiness=4:accuracy=10:"
+                 "-vf", f"{pre},vidstabdetect=shakiness=4:accuracy=10:"
                         f"tripod=1:result={trf}",
                  "-f", "null", "-"])
-            vf = (f"{geom},vidstabtransform=input={trf}:tripod=1:crop=black:"
+            vf = (f"{pre},vidstabtransform=input={trf}:tripod=1:crop=black:"
                   f"optzoom=1:interpol=bicubic")
+        if post:
+            vf += "," + post
         if spec.get("grade"):
             vf += "," + spec["grade"]
         run(["ffmpeg", "-y", "-ss", f"{a:.3f}", "-i", src, "-t", f"{dur:.3f}",
