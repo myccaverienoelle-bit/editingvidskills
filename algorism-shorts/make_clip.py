@@ -61,7 +61,15 @@ PUNCT_SOFT = ",;:"
 
 
 def run(cmd: list[str]) -> None:
-    p = subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+    # -nostdin + DEVNULL: ffmpeg treats inherited stdin as an interactive
+    # command stream where 'q' means quit. A batch runner feeding its loop
+    # from a file via stdin redirection let ffmpeg swallow that file — and
+    # names like "SPINE-01_sq" contain 'q', silently truncating encodes
+    # mid-clip. Never let ffmpeg see a real stdin.
+    if cmd and cmd[0] == "ffmpeg":
+        cmd = [cmd[0], "-nostdin", *cmd[1:]]
+    p = subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE,
+                       stdin=subprocess.DEVNULL)
     if p.returncode != 0:
         sys.exit(f"FAILED: {' '.join(str(c) for c in cmd[:12])}...\n"
                  + p.stderr.decode(errors="replace")[-2000:])
