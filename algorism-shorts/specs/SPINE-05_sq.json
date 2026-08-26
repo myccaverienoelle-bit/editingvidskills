@@ -1,0 +1,20 @@
+{
+ "id": "SPINE-05",
+ "source": "/tmp/claude-0/-home-user-editingvidskills/3f9cea34-a6d8-5bcb-863f-1a9285d70370/scratchpad/footage/C0128.MP4",
+ "transcript": "/tmp/claude-0/-home-user-editingvidskills/3f9cea34-a6d8-5bcb-863f-1a9285d70370/scratchpad/footage/edit/transcripts/C0128.json",
+ "aspect": "11",
+ "face_y": 0.456,
+ "ranges": [
+  {
+   "start": 2115.948,
+   "end": 2139.128
+  }
+ ],
+ "grade": "",
+ "lower_third": "/tmp/claude-0/-home-user-editingvidskills/3f9cea34-a6d8-5bcb-863f-1a9285d70370/scratchpad/assets/lowerthird_11.png",
+ "endframe": "/tmp/claude-0/-home-user-editingvidskills/3f9cea34-a6d8-5bcb-863f-1a9285d70370/scratchpad/assets/endframe_11.png",
+ "out": "/tmp/claude-0/-home-user-editingvidskills/3f9cea34-a6d8-5bcb-863f-1a9285d70370/scratchpad/edit/renders/11/SPINE-05_sq.mp4",
+ "keyline": {
+  "text": "I'm having a hard time myself trying to improve"
+ }
+}

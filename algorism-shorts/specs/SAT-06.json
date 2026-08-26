@@ -1,0 +1,27 @@
+{
+ "id": "SAT-06",
+ "source": "/tmp/claude-0/-home-user-editingvidskills/3f9cea34-a6d8-5bcb-863f-1a9285d70370/scratchpad/footage/C0128.MP4",
+ "transcript": "/tmp/claude-0/-home-user-editingvidskills/3f9cea34-a6d8-5bcb-863f-1a9285d70370/scratchpad/footage/edit/transcripts/C0128.json",
+ "aspect": "916",
+ "face_y": 0.456,
+ "ranges": [
+  {
+   "start": 831.664,
+   "end": 850.704
+  }
+ ],
+ "grade": "",
+ "lower_third": "/tmp/claude-0/-home-user-editingvidskills/3f9cea34-a6d8-5bcb-863f-1a9285d70370/scratchpad/assets/lowerthird_916.png",
+ "endframe": "/tmp/claude-0/-home-user-editingvidskills/3f9cea34-a6d8-5bcb-863f-1a9285d70370/scratchpad/assets/endframe_916.png",
+ "out": "/tmp/claude-0/-home-user-editingvidskills/3f9cea34-a6d8-5bcb-863f-1a9285d70370/scratchpad/edit/renders/916/SAT-06.mp4",
+ "keyline": {
+  "text": "you've become a better person"
+ },
+ "word_overrides": [
+  {
+   "approx": 836.0,
+   "from": "algorithms",
+   "to": "Algorism"
+  }
+ ]
+}

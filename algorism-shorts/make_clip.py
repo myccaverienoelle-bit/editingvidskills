@@ -27,21 +27,31 @@ import sys
 import tempfile
 from pathlib import Path
 
-COPPER_ASS = "&H385CB8&"  # #B85C38 in ASS BGR order
+# Subtitles ship as a real .ass file: this ffmpeg build's SRT decoder strips
+# inline {\...} override tags, so the copper key line must be a named style.
+# PlayRes matches the output frame, so every value below is in real pixels.
+# MarginV keeps captions ~31% up the 9:16 frame (platform bottom-UI safe zone)
+# and ~27% up the 1:1 frame.
+ASS_TEMPLATE = """[Script Info]
+ScriptType: v4.00+
+PlayResX: {w}
+PlayResY: {h}
+WrapStyle: 0
+ScaledBorderAndShadow: yes
 
-SUB_STYLE_916 = (
-    "FontName=Jost,FontSize=15,Bold=0,"
-    "PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,BackColour=&H80000000,"
-    "BorderStyle=1,Outline=1,Shadow=1,"
-    "Alignment=2,MarginV=90,MarginL=24,MarginR=24"
-)
-# 1:1 LinkedIn feed: lighter bottom UI, keep >=25% clearance anyway
-SUB_STYLE_11 = (
-    "FontName=Jost,FontSize=15,Bold=0,"
-    "PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,BackColour=&H80000000,"
-    "BorderStyle=1,Outline=1,Shadow=1,"
-    "Alignment=2,MarginV=78,MarginL=24,MarginR=24"
-)
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Base,Jost,{base_fs},&H00FFFFFF,&H000000FF,&H00000000,&H80000000,0,0,0,0,100,100,0,0,1,4,2,2,80,80,{margin_v},1
+Style: Key,Cormorant Garamond,{key_fs},&H00385CB8,&H000000FF,&H00000000,&H80000000,0,0,0,0,100,100,0,0,1,4,2,2,80,80,{margin_v},1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Text
+"""
+
+ASS_GEOM = {
+    "916": {"w": 1080, "h": 1920, "base_fs": 100, "key_fs": 132, "margin_v": 600},
+    "11": {"w": 1080, "h": 1080, "base_fs": 88, "key_fs": 116, "margin_v": 292},
+}
 
 GAP_BREAK = 0.6       # start a new caption chunk across silences >= this
 MAX_WORDS = 4
@@ -62,15 +72,26 @@ def probe_fps(video: str) -> str:
          "-show_entries", "stream=r_frame_rate", "-of",
          "default=noprint_wrappers=1:nokey=1", video],
         capture_output=True, text=True, check=True).stdout.strip()
-    return out  # e.g. "25/1" or "24000/1001"
+    return out.splitlines()[0]  # e.g. "25/1" or "24000/1001"
 
 
-def srt_ts(t: float) -> str:
-    ms = int(round(t * 1000))
-    h, r = divmod(ms, 3600_000)
-    m, r = divmod(r, 60_000)
-    s, ms = divmod(r, 1000)
-    return f"{h:02d}:{m:02d}:{s:02d},{ms:03d}"
+def probe_display_dims(video: str) -> tuple[int, int]:
+    """Effective display dimensions after container rotation is applied
+    (ffmpeg auto-rotates, so filter chains see these dims)."""
+    out = subprocess.run(
+        ["ffprobe", "-v", "error", "-select_streams", "v:0",
+         "-show_entries", "stream=width,height:stream_side_data=rotation",
+         "-of", "json", video],
+        capture_output=True, text=True, check=True).stdout
+    st = json.loads(out)["streams"][0]
+    w, h = int(st["width"]), int(st["height"])
+    rot = 0
+    for sd in st.get("side_data_list", []) or []:
+        if "rotation" in sd:
+            rot = int(sd["rotation"])
+    if abs(rot) % 180 == 90:
+        w, h = h, w
+    return w, h
 
 
 def norm(s: str) -> str:
@@ -110,14 +131,59 @@ def chunk_words(words: list[dict]) -> list[list[dict]]:
     return chunks
 
 
-def build_srt(spec: dict, transcript: dict, out_path: Path) -> None:
-    """Output-timeline SRT (Hard Rule 5) with copper key-line overrides."""
-    key_norm = norm(spec.get("keyline", {}).get("text", "")) if spec.get("keyline") else ""
+def ass_ts(t: float) -> str:
+    cs = int(round(t * 100))
+    h, r = divmod(cs, 360_000)
+    m, r = divmod(r, 6_000)
+    s, cs = divmod(r, 100)
+    return f"{h}:{m:02d}:{s:02d}.{cs:02d}"
+
+
+def find_key_span(words: list[dict], key_text: str) -> tuple[float, float] | None:
+    """Locate the keyline's word sequence inside the clip words and return
+    its (start, end) source-time span. Time-based matching — a text substring
+    can false-positive on partial repeats elsewhere in the clip."""
+    want = [t for t in norm(key_text).split() if t]
+    if not want:
+        return None
+    flat: list[tuple[str, int]] = []
+    for i, w in enumerate(words):
+        for t in norm(w.get("text") or "").split():
+            flat.append((t, i))
+    n = len(want)
+    for i in range(len(flat) - n + 1):
+        if [f[0] for f in flat[i:i + n]] == want:
+            return words[flat[i][1]]["start"], words[flat[i + n - 1][1]]["end"]
+    return None
+
+
+def build_ass(spec: dict, transcript: dict, out_path: Path) -> None:
+    """Output-timeline ASS captions (Hard Rule 5) with the copper key line
+    as a named style, selected by time span.
+
+    word_overrides fixes rare ASR mishears so captions stay word-accurate
+    to what was SAID (e.g. Scribe heard "algorithms" for "Algorism"):
+    [{"approx": 836.5, "from": "algorithms", "to": "Algorism"}]
+    """
+    geom = ASS_GEOM[spec.get("aspect", "916")]
+    overrides = spec.get("word_overrides") or []
+    key_text = (spec.get("keyline") or {}).get("text", "")
     entries = []
     offset = 0.0
     for r in spec["ranges"]:
         a, b = float(r["start"]), float(r["end"])
         ws = words_in(transcript, a, b)
+        # apply overrides by index; never mutate the cached transcript objects
+        for i2, w in enumerate(ws):
+            for ov in overrides:
+                if abs(w["start"] - float(ov["approx"])) < 2.0 and \
+                        norm(w.get("text") or "") == norm(ov["from"]):
+                    nw = dict(w)
+                    nw["text"] = ov["to"]
+                    ws[i2] = nw
+        span = find_key_span(ws, key_text) if key_text else None
+        if key_text and span is None:
+            print(f"  warning: keyline not found in range, no copper: {key_text!r}")
         for ch in chunk_words(ws):
             t0 = max(0.0, max(a, ch[0]["start"]) - a) + offset
             t1 = max(0.0, min(b, ch[-1]["end"]) - a) + offset
@@ -125,35 +191,48 @@ def build_srt(spec: dict, transcript: dict, out_path: Path) -> None:
                 t1 = t0 + 0.35
             text = " ".join((w.get("text") or "").strip() for w in ch)
             text = re.sub(r"\s+", " ", text).strip()
-            is_key = bool(key_norm) and norm(text) in key_norm
-            if is_key:
-                text = r"{\fnCormorant Garamond\fs20\1c" + COPPER_ASS + "}" + text
-            entries.append((t0, t1, text))
+            text = text.replace("{", "").replace("}", "").replace("\\", "")
+            mid = (ch[0]["start"] + ch[-1]["end"]) / 2
+            is_key = span is not None and span[0] - 0.05 <= mid <= span[1] + 0.05
+            entries.append((t0, t1, "Key" if is_key else "Base", text))
         offset += b - a
     entries.sort(key=lambda e: e[0])
-    lines = []
-    for i, (a, b, t) in enumerate(entries, 1):
-        lines += [str(i), f"{srt_ts(a)} --> {srt_ts(b)}", t, ""]
-    out_path.write_text("\n".join(lines), encoding="utf-8")
+    lines = [ASS_TEMPLATE.format(**geom)]
+    for (a, b, style, t) in entries:
+        lines.append(f"Dialogue: 0,{ass_ts(a)},{ass_ts(b)},{style},,0,0,0,{t}")
+    out_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
-def vf_for(spec: dict, rng: dict) -> str:
-    """Crop straight from the 4K frame, then scale. Optional punch-in zoom."""
+def vf_for(spec: dict, rng: dict, W: int, H: int) -> str:
+    """Crop window computed numerically from the effective (rotated) source
+    dims. This footage is native portrait 2160x3840, so 9:16 is a pure
+    downscale; 1:1 is a face-anchored square crop; punch-ins are
+    face-locked zoom crops (cuts land between sentences, never mid-word).
+
+    face_y: face center as a fraction of source height (locked-off tripod
+    shot, so one value serves the whole talk). Within the crop window the
+    face is kept at the same relative height (9:16) or at 40% (1:1).
+    """
     aspect = spec.get("aspect", "916")
-    cx = rng.get("cx", spec.get("cx"))  # left edge of crop window in source px
-    z = float(rng.get("zoom", 1.0))
+    z = float(rng.get("zoom", spec.get("zoom", 1.0)))
+    fy = float(rng.get("face_y", spec.get("face_y", 0.44)))
     if aspect == "916":
-        cw, ch_, ow, oh = "ih*9/16", "ih", 1080, 1920
+        cw, ch = W / z, H / z
+        y = fy * H * (1 - 1 / z)
+        ow, oh = 1080, 1920
     else:
-        cw, ch_, ow, oh = "ih", "ih", 1080, 1080
-    if z > 1.0:
-        cw, ch_ = f"({cw})/{z:.4f}", f"({ch_})/{z:.4f}"
-    x = f"{cx}" if cx is not None else f"(iw-({cw}))/2"
-    if z > 1.0 and cx is not None:
-        # keep the zoom window centered on the same subject center
-        x = f"({cx}+(ih*9/16)/2-({cw})/2)" if aspect == "916" else f"({cx}+ih/2-({cw})/2)"
-    y = f"(ih-({ch_}))/2" if z > 1.0 else "0"
-    parts = [f"crop=w={cw}:h={ch_}:x={x}:y={y}", f"scale={ow}:{oh}"]
+        cw = ch = W / z
+        y = fy * H - 0.40 * ch
+        ow, oh = 1080, 1080
+    x = (W - cw) / 2
+    cw_i = min(W, max(2, int(cw / 2) * 2))
+    ch_i = min(H, max(2, int(ch / 2) * 2))
+    x_i = min(W - cw_i, max(0, int(x / 2) * 2))
+    y_i = min(H - ch_i, max(0, int(y / 2) * 2))
+    parts = []
+    if not (aspect == "916" and z == 1.0):
+        parts.append(f"crop=w={cw_i}:h={ch_i}:x={x_i}:y={y_i}")
+    parts.append(f"scale={ow}:{oh}")
     if spec.get("grade"):
         parts.append(spec["grade"])
     return ",".join(parts)
@@ -167,6 +246,7 @@ def main() -> None:
     transcript = json.loads(Path(spec["transcript"]).read_text())
     aspect = spec.get("aspect", "916")
     fps = probe_fps(src)
+    W, H = probe_display_dims(src)
     work = Path(tempfile.mkdtemp(prefix=f"clip_{spec['id']}_"))
 
     enc_v = ["-c:v", "libx264", "-preset", "fast", "-crf", "18",
@@ -181,7 +261,8 @@ def main() -> None:
         fo = max(0.0, dur - 0.03)
         seg = work / f"seg_{i:02d}.mp4"
         run(["ffmpeg", "-y", "-ss", f"{a:.3f}", "-i", src, "-t", f"{dur:.3f}",
-             "-vf", vf_for(spec, r),
+             "-map", "0:v:0", "-map", "0:a:0",
+             "-vf", vf_for(spec, r, W, H),
              "-af", f"afade=t=in:st=0:d=0.03,afade=t=out:st={fo:.3f}:d=0.03",
              *enc_v, *enc_a, "-movflags", "+faststart", str(seg)])
         segs.append(seg)
@@ -195,13 +276,12 @@ def main() -> None:
         run(["ffmpeg", "-y", "-f", "concat", "-safe", "0", "-i", str(lst),
              "-c", "copy", "-movflags", "+faststart", str(base)])
 
-    # 2) SRT (captions always on, per spec)
-    srt = work / "clip.srt"
-    build_srt(spec, transcript, srt)
+    # 2) captions (always on, per spec) as .ass — see ASS_TEMPLATE note
+    subs = work / "clip.ass"
+    build_ass(spec, transcript, subs)
 
     # 3) composite: lower-third overlay (first 3s) then subtitles LAST
-    style = SUB_STYLE_916 if aspect == "916" else SUB_STYLE_11
-    srt_esc = str(srt).replace(":", r"\:").replace("'", r"\'")
+    subs_esc = str(subs).replace(":", r"\:").replace("'", r"\'")
     speech = work / "speech.mp4"
     fc_parts = []
     inputs = ["-i", str(base)]
@@ -213,7 +293,20 @@ def main() -> None:
             "fade=t=out:st=2.7:d=0.45:alpha=1,setpts=PTS-STARTPTS[lt]")
         fc_parts.append(f"{cur}[lt]overlay=enable='lte(t,3.2)'[vlt]")
         cur = "[vlt]"
-    fc_parts.append(f"{cur}subtitles='{srt_esc}':force_style='{style}'[outv]")
+    cta = spec.get("cta_overlay")
+    if cta:
+        # hard-CTA clip only (spine part 8): small copper wordmark-url in the
+        # top-safe area; this is the clip's single copper use.
+        st = float(cta["start"])
+        jost = cta.get("font", "/usr/share/fonts/truetype/brand/Jost-VF.ttf")
+        txt = cta["text"].replace(":", r"\:").replace("'", r"\'")
+        fc_parts.append(
+            f"{cur}drawtext=fontfile={jost}:text='{txt}':fontsize=46:"
+            f"fontcolor=0xB85C38:x=(w-text_w)/2:y=0.115*h:"
+            f"shadowcolor=black@0.35:shadowx=0:shadowy=2:"
+            f"alpha='if(lt(t\\,{st:.2f})\\,0\\,min(1\\,(t-{st:.2f})/0.5))'[vcta]")
+        cur = "[vcta]"
+    fc_parts.append(f"{cur}subtitles='{subs_esc}'[outv]")
     run(["ffmpeg", "-y", *inputs,
          "-filter_complex", ";".join(fc_parts),
          "-map", "[outv]", "-map", "0:a",
