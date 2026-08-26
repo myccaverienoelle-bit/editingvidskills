@@ -22,6 +22,7 @@ from __future__ import annotations
 
 import json
 import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -373,6 +374,11 @@ def main() -> None:
                         "default=noprint_wrappers=1:nokey=1", str(out)],
                        capture_output=True, text=True).stdout.strip()
     print(f"{spec['id']}: {out.name}  {float(d):.2f}s")
+    # Clean up our own tempdir only. Batch runners must NOT glob-delete
+    # /tmp/clip_<stem>_* — with parallel workers, the stem glob for
+    # "X_sq" also matches a concurrently rendering "X" and destroys its
+    # in-flight segments (this exact race shipped a 7s stub of a 19s clip).
+    shutil.rmtree(work, ignore_errors=True)
 
 
 if __name__ == "__main__":
