@@ -233,8 +233,6 @@ def vf_for(spec: dict, rng: dict, W: int, H: int) -> str:
     if not (aspect == "916" and z == 1.0):
         parts.append(f"crop=w={cw_i}:h={ch_i}:x={x_i}:y={y_i}")
     parts.append(f"scale={ow}:{oh}")
-    if spec.get("grade"):
-        parts.append(spec["grade"])
     return ",".join(parts)
 
 
@@ -253,16 +251,34 @@ def main() -> None:
              "-pix_fmt", "yuv420p", "-r", fps]
     enc_a = ["-c:a", "aac", "-b:a", "192k", "-ar", "48000", "-ac", "2"]
 
-    # 1) per-segment extract with crop+grade+edge fades
+    # 1) per-segment extract with stabilization+crop+grade+edge fades.
+    # The source has slow camera drift; vid.stab virtual-tripod (first frame
+    # of the segment as reference) locks the background rigid. Both passes
+    # run at OUTPUT resolution (after crop+scale, identical geometry) —
+    # detection at 4K is ~8x slower for no visible gain, and the tripod
+    # zoom crop at 1080p is imperceptible for this content.
     segs = []
     for i, r in enumerate(spec["ranges"]):
         a, b = float(r["start"]), float(r["end"])
         dur = b - a
         fo = max(0.0, dur - 0.03)
         seg = work / f"seg_{i:02d}.mp4"
+        trf = work / f"seg_{i:02d}.trf"
+        geom = vf_for(spec, r, W, H)
+        vf = geom
+        if spec.get("stabilize", True):
+            run(["ffmpeg", "-y", "-ss", f"{a:.3f}", "-i", src, "-t", f"{dur:.3f}",
+                 "-map", "0:v:0",
+                 "-vf", f"{geom},vidstabdetect=shakiness=4:accuracy=10:"
+                        f"tripod=1:result={trf}",
+                 "-f", "null", "-"])
+            vf = (f"{geom},vidstabtransform=input={trf}:tripod=1:crop=black:"
+                  f"optzoom=1:interpol=bicubic")
+        if spec.get("grade"):
+            vf += "," + spec["grade"]
         run(["ffmpeg", "-y", "-ss", f"{a:.3f}", "-i", src, "-t", f"{dur:.3f}",
              "-map", "0:v:0", "-map", "0:a:0",
-             "-vf", vf_for(spec, r, W, H),
+             "-vf", vf,
              "-af", f"afade=t=in:st=0:d=0.03,afade=t=out:st={fo:.3f}:d=0.03",
              *enc_v, *enc_a, "-movflags", "+faststart", str(seg)])
         segs.append(seg)
