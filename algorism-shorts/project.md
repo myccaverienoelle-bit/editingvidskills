@@ -59,3 +59,20 @@ specs/*.json + make_clip.py if ever needed).
 **Outstanding:** none. Regenerating any clip: put C0128.MP4 at the
 spec's source path, transcript JSON at its transcript path, run
 `python3 make_clip.py specs/<ID>.json`.
+
+## Session 1 addendum — v3 final (same day)
+
+User feedback after v2 delivery: residual shakiness + clips too loud.
+1. Tripod-mode vid.stab was ADDING per-frame micro-jitter (measured 2x
+   raw). Replaced with relative stabilization, smoothing=75, shakiness=8,
+   accuracy=15 — measured smoother than the raw camera (p95 ~0.4 vs 0.64
+   on the background-strip consecutive-frame metric).
+2. Loudness retargeted -14 → -16 LUFS integrated, TP -1.5.
+3. Root-caused a brutal batch bug: a runner feeding its loop from a file
+   via stdin let every ffmpeg child consume that file as interactive
+   commands — 'q' in "SPINE-01_sq" quit encodes mid-clip (deterministic
+   truncated stubs). Fix: -nostdin + stdin=DEVNULL in run(), </dev/null
+   in runners. All render paths now guarded.
+4. Priority-ordered rendering (posting order, not alphabetical) with
+   rolling wave delivery; every delivered file duration+LUFS-verified.
+Final v3 set: 29/29 delivered, QC 0 failures.
