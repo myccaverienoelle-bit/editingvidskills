@@ -7,7 +7,7 @@ video-use skill's hard rules:
   per-segment extract (crop straight from 4K -> 1080x1920 or 1080x1080,
   grade, 30ms audio edge fades) -> lossless concat -> lower-third overlay
   (first 3s, alpha fades) -> per-clip SRT burned LAST -> 1.5s end-frame
-  card appended with identical encode params -> two-pass -14 LUFS loudnorm.
+  card appended with identical encode params -> two-pass -16 LUFS loudnorm.
 
 Captions: natural sentence case, <=4-word chunks broken on punctuation and
 speech gaps, Jost, white, subtle shadow, MarginV inside the platform safe
@@ -267,13 +267,20 @@ def main() -> None:
         pre, post = vf_pre(spec), vf_post(spec, r)
         vf = pre
         if spec.get("stabilize", True):
+            # Smoothed RELATIVE stabilization, not virtual tripod: tripod
+            # aligns each frame independently to a reference, so estimation
+            # noise (worsened by the aperture problem on the vertical slats
+            # and by his gestures) becomes visible micro-jitter — measured
+            # 2x the raw footage's frame-to-frame background motion. A 3s
+            # smoothing window removes the slow drift and, because
+            # corrections are averaged, cannot introduce per-frame shake.
             run(["ffmpeg", "-y", "-ss", f"{a:.3f}", "-i", src, "-t", f"{dur:.3f}",
                  "-map", "0:v:0",
-                 "-vf", f"{pre},vidstabdetect=shakiness=4:accuracy=10:"
-                        f"tripod=1:result={trf}",
+                 "-vf", f"{pre},vidstabdetect=shakiness=8:accuracy=15:"
+                        f"result={trf}",
                  "-f", "null", "-"])
-            vf = (f"{pre},vidstabtransform=input={trf}:tripod=1:crop=black:"
-                  f"optzoom=1:interpol=bicubic")
+            vf = (f"{pre},vidstabtransform=input={trf}:smoothing=75:"
+                  f"crop=black:optzoom=1:interpol=bicubic")
         if post:
             vf += "," + post
         if spec.get("grade"):
@@ -345,11 +352,11 @@ def main() -> None:
     # 5) two-pass loudnorm -> final
     meas = subprocess.run(
         ["ffmpeg", "-y", "-hide_banner", "-nostats", "-i", str(prenorm),
-         "-af", "loudnorm=I=-14:TP=-1:LRA=11:print_format=json",
+         "-af", "loudnorm=I=-16:TP=-1.5:LRA=11:print_format=json",
          "-vn", "-f", "null", "-"],
         capture_output=True, text=True).stderr
     j0, j1 = meas.rfind("{"), meas.rfind("}")
-    ln = "loudnorm=I=-14:TP=-1:LRA=11"
+    ln = "loudnorm=I=-16:TP=-1.5:LRA=11"
     if j0 != -1 and j1 > j0:
         try:
             m = json.loads(meas[j0:j1 + 1])
