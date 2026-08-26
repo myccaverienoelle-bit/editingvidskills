@@ -41,6 +41,21 @@ admissions unbroken, qualifiers kept, no gloss, no music, no grade.
   gateway regardless of user allowlist); footage came via user's work
   Google Drive share link (drive.usercontent.google.com + confirm token).
 
-**Outstanding:**
-- Batch render + per-clip QC (frames at boundaries, duration, loudness).
-- Deliver clips to user; decide final delivery channel for 28 files.
+**Late-session fixes (user feedback):**
+- Camera had slow drift (user caught it in playback; confirmed via
+  background difference-blend). Fixed with vid.stab virtual tripod
+  (tripod=1 both passes) at output resolution; full re-render.
+- 1:1 squares initially mistracked (detect ran on the tight crop where
+  the body dominates → over-zoom, off-center). Fixed: stabilize on the
+  full 1080x1920 frame, crop square after the transform.
+
+**Delivered:** all 29 files (23×9:16 + 6×1:1) via chat, QC-passed
+(durations exact, -14 LUFS, framing/caption/keyline/end-frame verified
+on contact sheets and spot frames). Files >30MiB shipped as CRF21-22
+delivery transcodes (visually transparent); pristine CRF18 masters
+remained in the session scratchpad (ephemeral — regenerate via
+specs/*.json + make_clip.py if ever needed).
+
+**Outstanding:** none. Regenerating any clip: put C0128.MP4 at the
+spec's source path, transcript JSON at its transcript path, run
+`python3 make_clip.py specs/<ID>.json`.
