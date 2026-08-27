@@ -193,11 +193,16 @@ def build_ass(spec: dict, transcript: dict, out_path: Path) -> None:
         span = find_key_span(ws, key_text) if key_text else None
         if key_text and span is None:
             print(f"  warning: keyline not found in range, no copper: {key_text!r}")
+        card_w = spec.get("_card_window")
         for ch in chunk_words(ws):
             t0 = max(0.0, max(a, ch[0]["start"]) - a) + offset
             t1 = max(0.0, min(b, ch[-1]["end"]) - a) + offset
             if t1 <= t0:
                 t1 = t0 + 0.35
+            # the emphasis card carries this text full-frame; a caption on
+            # top of the card would double it, so drop overlapped events
+            if card_w and card_w[0] - 0.05 < (t0 + t1) / 2 < card_w[1] + 0.05:
+                continue
             text = " ".join((w.get("text") or "").strip() for w in ch)
             text = re.sub(r"\s+", " ", text).strip()
             text = text.replace("{", "").replace("}", "").replace("\\", "")
@@ -206,44 +211,104 @@ def build_ass(spec: dict, transcript: dict, out_path: Path) -> None:
             entries.append((t0, t1, "Key" if is_key else "Base", text))
         offset += b - a
     entries.sort(key=lambda e: e[0])
+    # While the lower-third is on screen (first ~3.4s) captions lift higher
+    # so the name card never collides with a caption line.
+    lift_v = 780 if spec.get("aspect", "916") == "916" else 430
     lines = [ASS_TEMPLATE.format(**geom)]
     for (a, b, style, t) in entries:
-        lines.append(f"Dialogue: 0,{ass_ts(a)},{ass_ts(b)},{style},,0,0,0,{t}")
+        mv = lift_v if (spec.get("lower_third") and a < 3.4) else 0
+        lines.append(f"Dialogue: 0,{ass_ts(a)},{ass_ts(b)},{style},,0,0,{mv},{t}")
     out_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
 def vf_pre(spec: dict) -> str:
     """Chain BEFORE stabilization: normalize the native-portrait source to
-    the full 1080x1920 frame. Stabilization must always run on this full
-    frame — the background dominates it, so vid.stab tracks the room, not
-    the speaker. (Detecting on a tighter crop mistracks his body: the 1:1
-    squares came out over-zoomed and off-center that way.)"""
-    return "scale=1080:1920"
+    zoom-times the output frame. Stabilization must always run on this
+    full frame — the background dominates it, so vid.stab tracks the room,
+    not the speaker. (Detecting on a tighter crop mistracks his body: the
+    1:1 squares came out over-zoomed and off-center that way.)
+
+    The punch-in (spec.zoom > 1) is realized as scale-up-then-crop so the
+    final window lands at native output resolution with no upscale."""
+    z = float(spec.get("zoom", 1.0))
+    w = max(2, int(1080 * z / 2) * 2)
+    h = max(2, int(1920 * z / 2) * 2)
+    return f"scale={w}:{h}"
 
 
 def vf_post(spec: dict, rng: dict) -> str:
-    """Chain AFTER stabilization: aspect crop / punch-in, in output pixels.
+    """Chain AFTER stabilization: face-anchored aspect crop out of the
+    (possibly zoomed) stabilized frame, then a gentle vignette that calms
+    the busy slat background and keeps the eye on the speaker.
 
     face_y: face center as a fraction of frame height (locked-off framing,
-    one value serves the whole talk). The 1:1 crop puts the face at 40% of
-    the square. Zoom crops upscale from 1080p — unused in this edit.
+    one value serves the whole talk). The face sits at 40% of the output
+    window's height for both aspects.
     """
     aspect = spec.get("aspect", "916")
-    z = float(rng.get("zoom", spec.get("zoom", 1.0)))
+    z = float(spec.get("zoom", 1.0))
     fy = float(rng.get("face_y", spec.get("face_y", 0.44)))
+    sw = max(2, int(1080 * z / 2) * 2)
+    sh = max(2, int(1920 * z / 2) * 2)
+    ow, oh = (1080, 1080) if aspect == "11" else (1080, 1920)
+    face_px = fy * sh
+    anchor = 0.40 if aspect == "11" else min(0.44, fy * z)  # keep 9:16 headroom
+    y = min(sh - oh, max(0, int((face_px - anchor * oh) / 2) * 2))
+    x = min(sw - ow, max(0, int((sw - ow) / 4) * 2))
     parts = []
-    if aspect == "11":
-        y = min(1920 - 1080, max(0, int((fy * 1920 - 0.40 * 1080) / 2) * 2))
-        parts.append(f"crop=1080:1080:0:{y}")
-    if z > 1.0:
-        ow, oh = (1080, 1080) if aspect == "11" else (1080, 1920)
-        w = max(2, int(ow / z / 2) * 2)
-        h = max(2, int(oh / z / 2) * 2)
-        x = int((ow - w) / 4) * 2
-        yz = min(oh - h, max(0, int(fy * oh * (1 - 1 / z) / 2) * 2))
-        parts.append(f"crop={w}:{h}:{x}:{yz}")
-        parts.append(f"scale={ow}:{oh}")
+    if (sw, sh) != (ow, oh):
+        parts.append(f"crop={ow}:{oh}:{x}:{y}")
+    # NOTE: background calming is done with a subject-protected mask overlay
+    # in the composite stage (see make_bg_mask) — never a global vignette,
+    # which darkens midtones on his face and pushes skin tone deep orange.
     return ",".join(parts)
+
+
+def make_bg_mask(path: Path, w: int, h: int, cy_frac: float) -> None:
+    """Subject-protected background dim: a black overlay whose alpha is 0
+    inside a soft ellipse around the speaker (face+torso) and ramps to
+    ~40% toward the frame edges. His pixels stay identical to camera —
+    only the busy background recedes. Built once per clip with geq."""
+    cx, cy = w // 2, int(h * cy_frac)
+    rx, ry = int(w * 0.46), int(h * 0.36)
+    expr = (f"st(0,sqrt(pow((X-{cx})/{rx},2)+pow((Y-{cy})/{ry},2)));"
+            f"255*0.40*clip((ld(0)-1)/0.85,0,1)")
+    run(["ffmpeg", "-y", "-f", "lavfi",
+         "-i", f"color=c=black:s={w}x{h}", "-frames:v", "1",
+         "-vf", f"format=rgba,geq=r=0:g=0:b=0:a='{expr}'",
+         str(path)])
+
+
+def wrap_lines(text: str, max_chars: int = 20) -> list[str]:
+    """Balance-wrap a short quote into 1-3 card lines."""
+    words = text.split()
+    lines, cur = [], ""
+    for w in words:
+        if cur and len(cur) + 1 + len(w) > max_chars:
+            lines.append(cur)
+            cur = w
+        else:
+            cur = f"{cur} {w}".strip()
+    if cur:
+        lines.append(cur)
+    return lines[:3]
+
+
+def make_card(text: str, path: Path, w: int, h: int) -> None:
+    """Full-frame emphasis card: the key line in copper Cormorant on the
+    brand cream — same visual language as the end-frame."""
+    corm = "/usr/share/fonts/truetype/brand/CormorantGaramond-VF.ttf"
+    lines = wrap_lines(text)
+    fs = 96 if w >= 1080 and h >= 1920 else 84
+    gap = int(fs * 1.35)
+    y0 = f"(h-{gap * (len(lines) - 1)})/2-{fs // 2}"
+    dts = []
+    for i, ln in enumerate(lines):
+        t = ln.replace("\\", "").replace("'", r"\\\'").replace(":", r"\\:")
+        dts.append(f"drawtext=fontfile={corm}:text='{t}':fontsize={fs}:"
+                   f"fontcolor=0xB85C38:x=(w-text_w)/2:y={y0}+{i * gap}")
+    run(["ffmpeg", "-y", "-f", "lavfi", "-i", f"color=c=0xF6F1E5:s={w}x{h}",
+         "-frames:v", "1", "-vf", ",".join(dts), str(path)])
 
 
 def main() -> None:
@@ -255,6 +320,23 @@ def main() -> None:
     aspect = spec.get("aspect", "916")
     fps = probe_fps(src)
     work = Path(tempfile.mkdtemp(prefix=f"clip_{spec['id']}_"))
+
+    # keyline span in the OUTPUT timeline (all clips are single-range)
+    key_out = None
+    if spec.get("keyline"):
+        r0 = spec["ranges"][0]
+        ws0 = words_in(transcript, float(r0["start"]), float(r0["end"]))
+        span = find_key_span(ws0, spec["keyline"]["text"])
+        if span:
+            key_out = (span[0] - float(r0["start"]), span[1] - float(r0["start"]))
+    speech_dur = sum(float(r["end"]) - float(r["start"]) for r in spec["ranges"])
+    card_win = None
+    if spec.get("card") and key_out:
+        c0 = max(0.5, key_out[1] - 0.2)
+        c1 = min(speech_dur - 0.4, c0 + 1.4)
+        if c1 - c0 >= 0.8:
+            card_win = (round(c0, 2), round(c1, 2))
+            spec["_card_window"] = card_win
 
     enc_v = ["-c:v", "libx264", "-preset", "fast", "-crf", "18",
              "-pix_fmt", "yuv420p", "-r", fps]
@@ -314,19 +396,46 @@ def main() -> None:
     subs = work / "clip.ass"
     build_ass(spec, transcript, subs)
 
-    # 3) composite: lower-third overlay (first 3s) then subtitles LAST
+    # 3) composite: lower-third overlay (first 3s), emphasis card (if any),
+    #    then subtitles LAST
     subs_esc = str(subs).replace(":", r"\:").replace("'", r"\'")
     speech = work / "speech.mp4"
     fc_parts = []
     inputs = ["-i", str(base)]
+    n_in = 1
     cur = "[0:v]"
+    if spec.get("bg_dim", True):
+        ow_m, oh_m = (1080, 1080) if aspect == "11" else (1080, 1920)
+        cy_frac = 0.44 if aspect == "916" else 0.42
+        mask_png = work / "bgmask.png"
+        make_bg_mask(mask_png, ow_m, oh_m, cy_frac)
+        inputs += ["-loop", "1", "-i", str(mask_png)]
+        fc_parts.append(f"{cur}[{n_in}:v]overlay=shortest=1[vdim]")
+        cur = "[vdim]"
+        n_in += 1
     if spec.get("lower_third"):
         inputs += ["-loop", "1", "-t", "3.2", "-i", spec["lower_third"]]
         fc_parts.append(
-            "[1:v]format=rgba,fade=t=in:st=0.25:d=0.35:alpha=1,"
+            f"[{n_in}:v]format=rgba,fade=t=in:st=0.25:d=0.35:alpha=1,"
             "fade=t=out:st=2.7:d=0.45:alpha=1,setpts=PTS-STARTPTS[lt]")
         fc_parts.append(f"{cur}[lt]overlay=enable='lte(t,3.2)'[vlt]")
         cur = "[vlt]"
+        n_in += 1
+    if card_win:
+        ow, oh = (1080, 1080) if aspect == "11" else (1080, 1920)
+        card_png = work / "card.png"
+        make_card(spec["keyline"]["text"], card_png, ow, oh)
+        cd = card_win[1] - card_win[0]
+        inputs += ["-loop", "1", "-t", f"{cd + 0.1:.2f}", "-i", str(card_png)]
+        fc_parts.append(
+            f"[{n_in}:v]format=rgba,fade=t=in:st=0:d=0.18:alpha=1,"
+            f"fade=t=out:st={cd - 0.18:.2f}:d=0.18:alpha=1,"
+            f"setpts=PTS-STARTPTS+{card_win[0]:.2f}/TB[card]")
+        fc_parts.append(
+            f"{cur}[card]overlay=enable='between(t,{card_win[0]:.2f},"
+            f"{card_win[1]:.2f})'[vcard]")
+        cur = "[vcard]"
+        n_in += 1
     cta = spec.get("cta_overlay")
     if cta:
         # hard-CTA clip only (spine part 8): small copper wordmark-url in the
@@ -374,8 +483,26 @@ def main() -> None:
                    f":offset={m['target_offset']}:linear=true")
         except Exception:
             pass
-    run(["ffmpeg", "-y", "-i", str(prenorm), "-c:v", "copy",
-         "-af", ln, *enc_a, "-movflags", "+faststart", str(out)])
+    if spec.get("sfx") and key_out:
+        # one subtle synthesized sub-pulse under the key line — warm,
+        # low, quiet; never on admission clips (they stay pure room tone)
+        pulse = work / "pulse.wav"
+        run(["ffmpeg", "-y", "-f", "lavfi", "-i",
+             "sine=frequency=54:duration=0.7",
+             "-af", "afade=t=in:st=0:d=0.05,afade=t=out:st=0.2:d=0.5,"
+                    "lowpass=f=95,volume=0.4",
+             str(pulse)])
+        dly = max(0, int((key_out[0] - 0.05) * 1000))
+        run(["ffmpeg", "-y", "-i", str(prenorm), "-i", str(pulse),
+             "-filter_complex",
+             f"[1:a]adelay={dly}|{dly}[p];"
+             f"[0:a][p]amix=inputs=2:duration=first:normalize=0[m];"
+             f"[m]{ln}[aout]",
+             "-map", "0:v", "-c:v", "copy", "-map", "[aout]",
+             *enc_a, "-movflags", "+faststart", str(out)])
+    else:
+        run(["ffmpeg", "-y", "-i", str(prenorm), "-c:v", "copy",
+             "-af", ln, *enc_a, "-movflags", "+faststart", str(out)])
 
     d = subprocess.run(["ffprobe", "-v", "error", "-show_entries",
                         "format=duration", "-of",

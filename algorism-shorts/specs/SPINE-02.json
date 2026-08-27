@@ -13,8 +13,12 @@
  "grade": "",
  "lower_third": "/tmp/claude-0/-home-user-editingvidskills/3f9cea34-a6d8-5bcb-863f-1a9285d70370/scratchpad/assets/lowerthird_916.png",
  "endframe": "/tmp/claude-0/-home-user-editingvidskills/3f9cea34-a6d8-5bcb-863f-1a9285d70370/scratchpad/assets/endframe_916.png",
- "out": "/tmp/claude-0/-home-user-editingvidskills/3f9cea34-a6d8-5bcb-863f-1a9285d70370/scratchpad/edit/renders/916/SPINE-02.mp4",
+ "out": "/tmp/claude-0/-home-user-editingvidskills/3f9cea34-a6d8-5bcb-863f-1a9285d70370/scratchpad/edit/renders_v4/916/SPINE-02.mp4",
  "keyline": {
   "text": "a rule book on how to improve your permanent record"
- }
+ },
+ "zoom": 1.18,
+ "vignette": true,
+ "card": true,
+ "sfx": true
 }

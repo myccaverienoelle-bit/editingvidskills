@@ -13,8 +13,12 @@
  "grade": "",
  "lower_third": "/tmp/claude-0/-home-user-editingvidskills/3f9cea34-a6d8-5bcb-863f-1a9285d70370/scratchpad/assets/lowerthird_11.png",
  "endframe": "/tmp/claude-0/-home-user-editingvidskills/3f9cea34-a6d8-5bcb-863f-1a9285d70370/scratchpad/assets/endframe_11.png",
- "out": "/tmp/claude-0/-home-user-editingvidskills/3f9cea34-a6d8-5bcb-863f-1a9285d70370/scratchpad/edit/renders/11/SAT-09_sq.mp4",
+ "out": "/tmp/claude-0/-home-user-editingvidskills/3f9cea34-a6d8-5bcb-863f-1a9285d70370/scratchpad/edit/renders_v4/11/SAT-09_sq.mp4",
  "keyline": {
   "text": "I'm not a doomer"
- }
+ },
+ "zoom": 1.18,
+ "vignette": true,
+ "card": true,
+ "sfx": true
 }
