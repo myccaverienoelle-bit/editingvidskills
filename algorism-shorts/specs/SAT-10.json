@@ -1,0 +1,25 @@
+{
+ "id": "SAT-10",
+ "source": "/tmp/claude-0/-home-user-editingvidskills/3f9cea34-a6d8-5bcb-863f-1a9285d70370/scratchpad/footage/C0128.MP4",
+ "transcript": "/tmp/claude-0/-home-user-editingvidskills/3f9cea34-a6d8-5bcb-863f-1a9285d70370/scratchpad/footage/edit/transcripts/C0128.json",
+ "aspect": "916",
+ "face_y": 0.456,
+ "ranges": [
+  {
+   "start": 2311.528,
+   "end": 2347.168
+  }
+ ],
+ "grade": "",
+ "lower_third": "/tmp/claude-0/-home-user-editingvidskills/3f9cea34-a6d8-5bcb-863f-1a9285d70370/scratchpad/assets/lowerthird_916.png",
+ "endframe": "/tmp/claude-0/-home-user-editingvidskills/3f9cea34-a6d8-5bcb-863f-1a9285d70370/scratchpad/assets/endframe_916.png",
+ "out": "/tmp/claude-0/-home-user-editingvidskills/3f9cea34-a6d8-5bcb-863f-1a9285d70370/scratchpad/edit/renders_v5/916/SAT-10.mp4",
+ "keyline": {
+  "text": "We're not going to be able to contain AI"
+ },
+ "zoom": 1.18,
+ "vignette": true,
+ "card": true,
+ "sfx": true,
+ "audio_clean": true
+}

@@ -1,0 +1,25 @@
+{
+ "id": "SPINE-01",
+ "source": "/tmp/claude-0/-home-user-editingvidskills/3f9cea34-a6d8-5bcb-863f-1a9285d70370/scratchpad/footage/C0128.MP4",
+ "transcript": "/tmp/claude-0/-home-user-editingvidskills/3f9cea34-a6d8-5bcb-863f-1a9285d70370/scratchpad/footage/edit/transcripts/C0128.json",
+ "aspect": "916",
+ "face_y": 0.456,
+ "ranges": [
+  {
+   "start": 558.412,
+   "end": 576.172
+  }
+ ],
+ "grade": "",
+ "lower_third": "/tmp/claude-0/-home-user-editingvidskills/3f9cea34-a6d8-5bcb-863f-1a9285d70370/scratchpad/assets/lowerthird_916.png",
+ "endframe": "/tmp/claude-0/-home-user-editingvidskills/3f9cea34-a6d8-5bcb-863f-1a9285d70370/scratchpad/assets/endframe_916.png",
+ "out": "/tmp/claude-0/-home-user-editingvidskills/3f9cea34-a6d8-5bcb-863f-1a9285d70370/scratchpad/edit/renders_v5/916/SPINE-01.mp4",
+ "keyline": {
+  "text": "they're either delusional or lying to you"
+ },
+ "zoom": 1.18,
+ "vignette": true,
+ "card": false,
+ "sfx": false,
+ "audio_clean": true
+}

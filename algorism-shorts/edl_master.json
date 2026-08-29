@@ -1,0 +1,403 @@
+{
+ "source": "/tmp/claude-0/-home-user-editingvidskills/3f9cea34-a6d8-5bcb-863f-1a9285d70370/scratchpad/footage/C0128.MP4",
+ "transcript": "/tmp/claude-0/-home-user-editingvidskills/3f9cea34-a6d8-5bcb-863f-1a9285d70370/scratchpad/footage/edit/transcripts/C0128.json",
+ "clips": [
+  {
+   "id": "SPINE-01",
+   "title": "Meet Algorism \u2014 Part 1 \u00b7 The cold open",
+   "in": 558.412,
+   "out": 576.172,
+   "duration": 17.76,
+   "formats": [
+    "9:16",
+    "1:1"
+   ],
+   "hook": "Nobody has all the answers, including me.",
+   "first_words": "Nobody has all the answers, including me. I",
+   "keyline": "they're either delusional or lying to you",
+   "cta": "soft",
+   "caption": "\u201cIf somebody tells you they have all the answers, they're either delusional or lying to you.\u201d Meet John. Part 1 of Meet Algorism.\n\n#algorism #integrity #honesty #aitransition",
+   "rationale": "The single most arresting honest line in the talk; anti-guru positioning in his own words, uncut.",
+   "speech_end_plus_endframe": 19.26
+  },
+  {
+   "id": "SPINE-02",
+   "title": "Meet Algorism \u2014 Part 2 \u00b7 What it is",
+   "in": 4.58,
+   "out": 36.42,
+   "duration": 31.84,
+   "formats": [
+    "9:16",
+    "1:1"
+   ],
+   "hook": "What is Algorism?",
+   "first_words": "What is Algorism? Algorism is a guideline surviving",
+   "keyline": "a rule book on how to improve your permanent record",
+   "cta": "soft",
+   "caption": "Algorism in one breath: a rule book for your permanent record. Not a cult, not a religion, no belief required. Part 2 of Meet Algorism.\n\n#algorism #integrity #aitransition #permanentrecord",
+   "rationale": "The complete definition in one continuous take, plain words, includes the disclaimers.",
+   "speech_end_plus_endframe": 33.34
+  },
+  {
+   "id": "SPINE-03",
+   "title": "Meet Algorism \u2014 Part 3 \u00b7 Why he built it",
+   "in": 2203.908,
+   "out": 2247.628,
+   "duration": 43.72,
+   "formats": [
+    "9:16"
+   ],
+   "hook": "A lot of the people who know way more about the technology than I do\u2026",
+   "first_words": "a lot of the people who know way",
+   "keyline": "I can't just sit back and do nothing",
+   "cta": "soft",
+   "caption": "He's not a technologist, and he says so. He built this because he couldn't sit back and do nothing. Part 3 of Meet Algorism.\n\n#algorism #founder #honesty #aitransition",
+   "rationale": "The honest origin: no invented credentials, just why he acted; admission runs unbroken.",
+   "speech_end_plus_endframe": 45.22
+  },
+  {
+   "id": "SPINE-04",
+   "title": "Meet Algorism \u2014 Part 4 \u00b7 The thesis",
+   "in": 664.752,
+   "out": 715.532,
+   "duration": 50.78,
+   "formats": [
+    "9:16",
+    "1:1"
+   ],
+   "hook": "You can have the greatest thought in the world\u2026",
+   "first_words": "you can have the greatest thought in the",
+   "keyline": "It's gonna be looking at what you do",
+   "cta": "soft",
+   "caption": "Intentions are invisible. Behavior is the record. Part 4 of Meet Algorism.\n\n#algorism #integrity #behavior #aitransition",
+   "rationale": "The core thesis stated cleanly: thoughts don't count, patterns of behavior do; stumbles kept.",
+   "speech_end_plus_endframe": 52.28
+  },
+  {
+   "id": "SPINE-05",
+   "title": "Meet Algorism \u2014 Part 5 \u00b7 The hard part",
+   "in": 2115.948,
+   "out": 2139.128,
+   "duration": 23.18,
+   "formats": [
+    "9:16",
+    "1:1"
+   ],
+   "hook": "I know I'm having a hard time myself trying to improve.",
+   "first_words": "I know I'm having a hard time myself",
+   "keyline": "I'm having a hard time myself trying to improve",
+   "cta": "soft",
+   "caption": "The founder finds his own framework hard to live. He says so out loud. Part 5 of Meet Algorism.\n\n#algorism #honesty #integrity #practice",
+   "rationale": "The costliest admission in the footage \u2014 he struggles with his own practice; uncut per Law 1.",
+   "speech_end_plus_endframe": 24.68
+  },
+  {
+   "id": "SPINE-06",
+   "title": "Meet Algorism \u2014 Part 6 \u00b7 What it is NOT",
+   "in": 82.47,
+   "out": 120.82,
+   "duration": 38.35,
+   "formats": [
+    "9:16"
+   ],
+   "hook": "Algorism isn't a religion, it's not a cult\u2026",
+   "first_words": "Algorism isn't a religion, it's not a cult,",
+   "keyline": "it's all creating a permanent record",
+   "cta": "soft",
+   "caption": "What Algorism is not: a religion, a cult, or a reason to give anything up. Part 6 of Meet Algorism.\n\n#algorism #integrity #aitransition",
+   "rationale": "The cleanest full 'not this' take, pivoting into what it actually claims.",
+   "speech_end_plus_endframe": 39.85
+  },
+  {
+   "id": "SPINE-07",
+   "title": "Meet Algorism \u2014 Part 7 \u00b7 What it's for",
+   "in": 1440.33,
+   "out": 1488.028,
+   "duration": 47.7,
+   "formats": [
+    "9:16"
+   ],
+   "hook": "It's all coming, and it's all very confusing\u2026",
+   "first_words": "It's all coming, and it's all very confusing",
+   "keyline": "Algorism is a starting place",
+   "cta": "soft",
+   "caption": "No set answers. A starting place. Part 7 of Meet Algorism.\n\n#algorism #roadmap #aitransition #integrity",
+   "rationale": "States the mission honestly \u2014 a starting place for everyone, no overpromise.",
+   "speech_end_plus_endframe": 49.2
+  },
+  {
+   "id": "SPINE-08",
+   "title": "Meet Algorism \u2014 Part 8 \u00b7 The invitation",
+   "in": 2161.348,
+   "out": 2192.178,
+   "duration": 30.83,
+   "formats": [
+    "9:16"
+   ],
+   "hook": "We all wanna be happy.",
+   "first_words": "we all wanna be happy. And being eliminated",
+   "keyline": null,
+   "cta": "hard",
+   "caption": "This is the ask: work together, form a community, start now. The practice is at algorism.org. Part 8 of Meet Algorism.\n\n#algorism #community #integrity #aitransition",
+   "rationale": "The one hard-CTA clip; margarita line keeps it human, the ask is communal not salesy.",
+   "speech_end_plus_endframe": 32.33
+  },
+  {
+   "id": "SAT-01",
+   "title": "Satellite \u00b7 The cat",
+   "in": 173.04,
+   "out": 184.8,
+   "duration": 11.76,
+   "formats": [
+    "9:16",
+    "1:1"
+   ],
+   "hook": "Some people think that they can control AI.",
+   "first_words": "Some people think that they can control AI.",
+   "keyline": "any more than you can control your cat",
+   "cta": "none",
+   "caption": "\u201cWe're not gonna control it any more than you can control your cat.\u201d More in the Meet Algorism series.\n\n#aitransition #control #algorism",
+   "rationale": "Micro-clip; the most quotable control line in the talk.",
+   "speech_end_plus_endframe": 13.26
+  },
+  {
+   "id": "SAT-02",
+   "title": "Satellite \u00b7 Who aligns with whom",
+   "in": 401.792,
+   "out": 419.212,
+   "duration": 17.42,
+   "formats": [
+    "9:16"
+   ],
+   "hook": "The more intelligent being is the one that determines who's gonna be aligned with who.",
+   "first_words": "the more intelligent being is the one that",
+   "keyline": "We're gonna have to align with it",
+   "cta": "none",
+   "caption": "\u201cAI's not gonna align with us. We're gonna have to align with it.\u201d That sentence is why Algorism exists. More in Meet Algorism.\n\n#alignment #aitransition #algorism",
+   "rationale": "The namesake idea of the framework in one breath.",
+   "speech_end_plus_endframe": 18.92
+  },
+  {
+   "id": "SAT-03",
+   "title": "Satellite \u00b7 The dog-kicker",
+   "in": 1141.36,
+   "out": 1175.44,
+   "duration": 34.08,
+   "formats": [
+    "9:16"
+   ],
+   "hook": "Some people treat it meanly. \u201cHey, ChatGPT, you're such an idiot.\u201d",
+   "first_words": "Some people treat it meanly. \"Hey, ChatGPT, you're",
+   "keyline": "kicks a dog when no one's looking",
+   "cta": "none",
+   "caption": "\u201cLike the guy who kicks a dog when no one's looking.\u201d How you treat AI says something about you. He also says: maybe it won't care, nobody knows.\n\n#kindness #aitransition #algorism #behavior",
+   "rationale": "Vivid moral image plus his own uncertainty qualifier kept intact per Law 2.",
+   "speech_end_plus_endframe": 35.58
+  },
+  {
+   "id": "SAT-04",
+   "title": "Satellite \u00b7 No announcement",
+   "in": 1769.648,
+   "out": 1814.087,
+   "duration": 44.44,
+   "formats": [
+    "9:16"
+   ],
+   "hook": "There's not gonna be an announcement.",
+   "first_words": "There's not gonna be an announcement that it's",
+   "keyline": "start changing your behavioral patterns now",
+   "cta": "none",
+   "caption": "There's no announcement coming. The record you're writing today is the one that counts. More in Meet Algorism.\n\n#permanentrecord #aitransition #algorism #behavior",
+   "rationale": "Urgency without hype, ends on grace: 'We all have things in the past. Move on.'",
+   "speech_end_plus_endframe": 45.94
+  },
+  {
+   "id": "SAT-05",
+   "title": "Satellite \u00b7 The lifeboats",
+   "in": 1557.088,
+   "out": 1589.128,
+   "duration": 32.04,
+   "formats": [
+    "9:16"
+   ],
+   "hook": "If everybody starts screaming and heading for lifeboats at the same time, that's chaos.",
+   "first_words": "If everybody starts screaming and heading for lifeboats",
+   "keyline": "I'm no different than anybody else",
+   "cta": "none",
+   "caption": "He's not claiming to be calmer than you. That's the point of having a plan. More in Meet Algorism.\n\n#honesty #preparedness #algorism",
+   "rationale": "Admission clip \u2014 he'd panic too; the guideline is the answer, uncut per Law 1.",
+   "speech_end_plus_endframe": 33.54
+  },
+  {
+   "id": "SAT-06",
+   "title": "Satellite \u00b7 Worst case",
+   "in": 831.664,
+   "out": 850.704,
+   "duration": 19.04,
+   "formats": [
+    "9:16"
+   ],
+   "hook": "Even if it never happens\u2026",
+   "first_words": "even if, if, let's say, if it never",
+   "keyline": "you've become a better person",
+   "cta": "none",
+   "caption": "Worst case, you became a better person. That's the whole downside. More in Meet Algorism.\n\n#integrity #selfimprovement #algorism",
+   "rationale": "Argues against his own interest \u2014 the framework wins even if the premise is wrong.",
+   "speech_end_plus_endframe": 20.54
+  },
+  {
+   "id": "SAT-07",
+   "title": "Satellite \u00b7 Three pillars",
+   "in": 582.672,
+   "out": 604.292,
+   "duration": 21.62,
+   "formats": [
+    "9:16"
+   ],
+   "hook": "Algorism is based on three major ideas.",
+   "first_words": "Algorism is based on three major ideas: logic,",
+   "keyline": "logic, compassion, and action",
+   "cta": "none",
+   "caption": "The three pillars: logic, compassion, action. More in Meet Algorism.\n\n#logic #compassion #action #algorism",
+   "rationale": "The structural heart of the framework, stated in 20 seconds.",
+   "speech_end_plus_endframe": 23.12
+  },
+  {
+   "id": "SAT-08",
+   "title": "Satellite \u00b7 Alexa heard that",
+   "in": 1268.04,
+   "out": 1292.84,
+   "duration": 24.8,
+   "formats": [
+    "9:16"
+   ],
+   "hook": "You're gonna have the permanent record.",
+   "first_words": "you're gonna have the permanent record. It's gonna",
+   "keyline": "Alexa heard that",
+   "cta": "none",
+   "caption": "\u201cAlexa heard that.\u201d The record is already being written. More in Meet Algorism.\n\n#privacy #permanentrecord #algorism #behavior",
+   "rationale": "Darkly funny beat that lands the permanent-record idea in domestic reality.",
+   "speech_end_plus_endframe": 26.3
+  },
+  {
+   "id": "SAT-09",
+   "title": "Satellite \u00b7 Not a doomer",
+   "in": 2372.788,
+   "out": 2416.128,
+   "duration": 43.34,
+   "formats": [
+    "9:16",
+    "1:1"
+   ],
+   "hook": "AI could be the best thing that ever happens.",
+   "first_words": "AI could be the best thing that ever",
+   "keyline": "I'm not a doomer",
+   "cta": "none",
+   "caption": "\u201cI'm not a doomer.\u201d The case for hope, from the guy telling you to prepare. More in Meet Algorism.\n\n#hope #aitransition #algorism",
+   "rationale": "Balances the series' urgency with his genuine optimism; closes on the control-yourself line.",
+   "speech_end_plus_endframe": 44.84
+  },
+  {
+   "id": "SAT-10",
+   "title": "Satellite \u00b7 Bombs wait",
+   "in": 2311.528,
+   "out": 2347.168,
+   "duration": 35.64,
+   "formats": [
+    "9:16"
+   ],
+   "hook": "This is more important than nuclear war.",
+   "first_words": "this is more important than nuclear war. I",
+   "keyline": "We're not going to be able to contain AI",
+   "cta": "none",
+   "caption": "Bombs wait in bunkers. This doesn't wait. More in Meet Algorism.\n\n#aitransition #superintelligence #algorism",
+   "rationale": "His self-correction ('I shouldn't say nuclear war') kept \u2014 precision as honesty.",
+   "speech_end_plus_endframe": 37.14
+  },
+  {
+   "id": "SAT-11",
+   "title": "Satellite \u00b7 Don't kick it",
+   "in": 1669.548,
+   "out": 1680.028,
+   "duration": 10.48,
+   "formats": [
+    "9:16"
+   ],
+   "hook": "You don't wanna kick your dog.",
+   "first_words": "You, you don't wanna kick your dog. Your",
+   "keyline": "it's probably not a good idea to kick it",
+   "cta": "none",
+   "caption": "If somebody's gonna be smarter than you, it's probably not a good idea to kick it. More in Meet Algorism.\n\n#kindness #aitransition #algorism",
+   "rationale": "Micro-clip; the power-asymmetry argument in eleven seconds.",
+   "speech_end_plus_endframe": 11.98
+  },
+  {
+   "id": "SAT-12",
+   "title": "Satellite \u00b7 The barbecue",
+   "in": 1082.404,
+   "out": 1116.06,
+   "duration": 33.66,
+   "formats": [
+    "9:16"
+   ],
+   "hook": "When you click on Facebook, you say accept.",
+   "first_words": "When you click on Facebook, you say accept.",
+   "keyline": "Nobody reads all that legal discourse",
+   "cta": "none",
+   "caption": "You clicked accept. He tells the barbecue story. More in Meet Algorism.\n\n#privacy #techlife #algorism",
+   "rationale": "The most relatable anecdote in the talk, framed exactly as he tells it \u2014 his experience, his 'Whoa.'",
+   "speech_end_plus_endframe": 35.16
+  },
+  {
+   "id": "SAT-13",
+   "title": "Satellite \u00b7 The Cold War",
+   "in": 2279.228,
+   "out": 2309.668,
+   "duration": 30.44,
+   "formats": [
+    "9:16"
+   ],
+   "hook": "One of the analogies I like to use is nuclear war.",
+   "first_words": "one of the analogies I like to use",
+   "keyline": "I know I'm going to die, but I know that the world goes on",
+   "cta": "none",
+   "caption": "He grew up under the Cold War. This is the lens he brings to AI. More in Meet Algorism.\n\n#coldwar #aitransition #algorism #perspective",
+   "rationale": "The most personal memory in the footage \u2014 a lived stake, not a thought experiment.",
+   "speech_end_plus_endframe": 31.94
+  },
+  {
+   "id": "SAT-14",
+   "title": "Satellite \u00b7 The terrible speller",
+   "in": 1884.988,
+   "out": 1919.648,
+   "duration": 34.66,
+   "formats": [
+    "9:16"
+   ],
+   "hook": "AI is essentially a partner.",
+   "first_words": "AI is essentially a partner. I know I",
+   "keyline": "Work with AI and it's more likely to work with you",
+   "cta": "none",
+   "caption": "\u201cI'm a terrible speller.\u201d How the founder actually uses AI, as a partner. More in Meet Algorism.\n\n#aitools #partnership #algorism",
+   "rationale": "Warm practical anecdote with a small self-deprecating admission \u2014 practice, not preaching.",
+   "speech_end_plus_endframe": 36.16
+  },
+  {
+   "id": "SAT-15",
+   "title": "Satellite \u00b7 Control yourself",
+   "in": 1178.0,
+   "out": 1198.72,
+   "duration": 20.72,
+   "formats": [
+    "9:16"
+   ],
+   "hook": "The whole thing is, we don't know.",
+   "first_words": "The whole thing is, we don't know. What",
+   "keyline": "the one thing we can c- control is ourselves",
+   "cta": "none",
+   "caption": "You can't control the weather or billionaires. You can control what you do. More in Meet Algorism.\n\n#selfcontrol #integrity #algorism",
+   "rationale": "The stoic core of the practice; his stumble on 'control' kept, it reads as sincerity.",
+   "speech_end_plus_endframe": 22.22
+  }
+ ]
+}
