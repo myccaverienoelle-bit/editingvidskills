@@ -376,10 +376,25 @@ def main() -> None:
             vf += "," + post
         if spec.get("grade"):
             vf += "," + spec["grade"]
+        # Audio cleanup (user: grainy/noisy source, ~13dB speech-to-floor):
+        # de-rumble -> RNNoise neural denoise -> downward expansion (sinks
+        # residual room/movement noise between phrases without chopping word
+        # tails) -> +2dB presence at 3kHz for clarity -> HF cap. Edge fades
+        # stay last. Falls back to afftdn if the model file is missing.
+        af = f"afade=t=in:st=0:d=0.03,afade=t=out:st={fo:.3f}:d=0.03"
+        if spec.get("audio_clean", True):
+            model = spec.get("rnnn_model",
+                             "/tmp/rnnm/beguiling-drafter-2018-08-30/bd.rnnn")
+            dn = (f"arnndn=m={model}" if Path(model).exists()
+                  else "afftdn=nr=12:nf=-40:tn=1")
+            af = (f"highpass=f=70,{dn},"
+                  f"compand=attacks=0.02:decays=0.35:"
+                  f"points=-80/-95|-48/-53|-35/-35|0/0:soft-knee=6,"
+                  f"equalizer=f=3000:t=q:w=1.2:g=2,lowpass=f=14000,") + af
         run(["ffmpeg", "-y", "-ss", f"{a:.3f}", "-i", src, "-t", f"{dur:.3f}",
              "-map", "0:v:0", "-map", "0:a:0",
              "-vf", vf,
-             "-af", f"afade=t=in:st=0:d=0.03,afade=t=out:st={fo:.3f}:d=0.03",
+             "-af", af,
              *enc_v, *enc_a, "-movflags", "+faststart", str(seg)])
         segs.append(seg)
 
