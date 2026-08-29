@@ -76,3 +76,16 @@ User feedback after v2 delivery: residual shakiness + clips too loud.
 4. Priority-ordered rendering (posting order, not alphabetical) with
    rolling wave delivery; every delivered file duration+LUFS-verified.
 Final v3 set: 29/29 delivered, QC 0 failures.
+
+## Session 1 addendum — v4/v5 final (Aug 27-29)
+
+v4 (user: focus on John, frames busy, caption overlap, add engagement):
+1.18x face-anchored punch-in; subject-protected background dim (geq mask,
+alpha 0 over face/torso — a global vignette had pushed skin deep orange);
+captions lift above the lower-third for its 3.4s; copper Cormorant
+emphasis card + subtle sub-pulse at the key line on 16 non-admission
+clips. v5 (user: audio grainy, noise/movement): highpass 70Hz -> RNNoise
+-> downward expansion -> +2dB @3kHz -> lowpass 14kHz; pause floor
+-36.7 -> -64.4 dB RMS, speech unchanged; -16 LUFS kept. All 29 QC'd
+0 failures, delivered in chat waves; final/ in repo replaced with v5
+masters (branch ZIP = final set).
