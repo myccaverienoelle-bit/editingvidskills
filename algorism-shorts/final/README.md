@@ -1,4 +1,4 @@
-# Algorism Launch — Final Clip Set (v3)
+# Algorism Launch — Final Clip Set (v5)
 
 29 finished clips, full-quality v5 masters: smooth-stabilized, denoised
 voice (28dB noise reduction, presence EQ), focus framing with protected
